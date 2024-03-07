@@ -1,0 +1,27 @@
+{
+  "name": "knvs",
+  "version": "20.10.0",
+  "description": "Simple Web App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knvs1945/bitknvs-project.git"
+  },
+  "author": "Kevin Joseff Cabrera",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/knvs1945/bitknvs-project/issues"
+  },
+  "homepage": "https://github.com/knvs1945/bitknvs-project#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.0",
+    "pg": "^8.11.5",
+    "sqlite3": "^5.1.7"
+  }
+}
