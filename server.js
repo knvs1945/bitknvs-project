@@ -1,6 +1,7 @@
 const http = require("http");
 const url = require("url");
 const fs = require("fs");
+const path = require("path");
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
 
@@ -12,29 +13,54 @@ var indexpage = "/index";
 // Server Object
 http.createServer(function(req, res) {
   let q = url.parse(req.url, true);
-  let filename = "";
-  let dir = "./pages/";
+  let ext = "";
+  if (q.pathname) ext = path.extname(q.pathname);
+  console.log(ext);
 
-  // routing starts here
-  if (q.pathname !== "/") {
-    if (q.pathname === "/index") { filename = maindir + indexpage; }
-    else {
-      if (q.pathname === "/about" || q.pathname === "/resume") 
-      filename = maindir + infodir + q.pathname;
+  let filename = ".";
+  let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
+  
+  // routing starts here.
+  if (ext == "") {
+    if (q.pathname !== "/") {
+      if (q.pathname === "/index") { filename = maindir + indexpage; }
+      else {
+        if (q.pathname === "/about" || q.pathname === "/resume") 
+        filename = maindir + infodir + q.pathname;
+      }
+    }
+    else { filename = maindir + indexpage; } // default to main page instead
+    filename += ".html"; // hide URL filetype by forcing file type addition to filename
+  }
+  // Resources have different extension names so we adjust the content type instead.
+  else {
+    filename += q.pathname;
+    console.log("Loading Resource: " + filename);
+    switch (ext) {
+      case ".jpg":
+      case ".jpeg":
+        contentType = "image/jpeg";
+        break;
+      case ".png":
+        contentType = "image/png";
+        break;
+      case ".gif":
+        contentType = "image/gif";
+        break;
     }
   }
-  else { filename = maindir + indexpage; } // default to main page instead
-  filename += ".html"; // hide URL filetype by forcing file type addition to filename
   
   // start with the index.html
   fs.readFile(filename, function(err, data) {
     if (err) {
-        res.writeHead(404, {'Content-Type': 'text/html'});
-        console.log(err);
+        res.writeHead(404, {'Content-Type': contentType});
+        console.log(err.code);
         return res.end("404 Not Found");
-
     }
-    res.writeHead(200, {'Content-Type': 'text/html'});
+
+    // check if the file being read is an html or 
+
+    res.writeHead(200, {'Content-Type': contentType});
     res.write(data);
     console.log("Incoming Request: " + req.url);
     return res.end();
@@ -42,4 +68,4 @@ http.createServer(function(req, res) {
   
 }).listen(port);
 
-console.log("Server now listening at port " + port );
+console.log("Server now listening at port " + port + " - " + process.env.PORT );
