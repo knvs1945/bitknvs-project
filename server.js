@@ -1,7 +1,8 @@
-var http = require("http");
-var url = require("url");
-var fs = require("fs");
-var port = 8080;
+const http = require("http");
+const url = require("url");
+const fs = require("fs");
+// const port = 8080;
+const port = process.env.PORT || 5000; // heroku ports
 
 // file entries & directories
 var maindir = "./pages";
