@@ -15,7 +15,6 @@ http.createServer(function(req, res) {
   let q = url.parse(req.url, true);
   let ext = "";
   if (q.pathname) ext = path.extname(q.pathname);
-  console.log(ext);
 
   let filename = ".";
   let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
