@@ -21,11 +21,19 @@ http.createServer(function(req, res) {
   
   // routing starts here.
   if (ext == "") {
-    if (q.pathname !== "/") {
-      if (q.pathname === "/index") { filename = maindir + indexpage; }
+    let pathname = q.pathname.toLowerCase();
+    if (pathname !== "/") {
+      if (pathname === "/index") { filename = maindir + indexpage; }
       else {
-        if (q.pathname === "/about" || q.pathname === "/resume") 
-        filename = maindir + infodir + q.pathname;
+        // if (q.pathname === "/about" || q.pathname === "/resume") 
+        switch (pathname){
+          case "/about":
+          case "/resume":
+          case "/projects":
+            filename = maindir + infodir + q.pathname;
+            break;
+        }
+        
       }
     }
     else { filename = maindir + indexpage; } // default to main page instead
