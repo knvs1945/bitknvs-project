@@ -2,6 +2,10 @@ const http = require("http");
 const url = require("url");
 const fs = require("fs");
 const path = require("path");
+
+// API modules for the games
+const SBAPI_readHS = require("./pages/data/spykeball/hs");
+
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
 
@@ -14,31 +18,50 @@ var indexpage = "/index";
 http.createServer(function(req, res) {
   let q = url.parse(req.url, true);
   let ext = "";
+  let isAPI = false;
+  let apidata;
   if (q.pathname) ext = path.extname(q.pathname);
 
   let filename = ".";
   let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
   
+  // start checking the request method here so we can include behaviors for API methods
   // routing starts here.
-  if (ext == "") {
-    let pathname = q.pathname.toLowerCase();
-    if (pathname !== "/") {
-      if (pathname === "/index") { filename = maindir + indexpage; }
-      else {
-        // if (q.pathname === "/about" || q.pathname === "/resume") 
-        switch (pathname){
-          case "/about":
-          case "/resume":
-          case "/projects":
-            filename = maindir + infodir + q.pathname;
-            break;
+
+  if (req.method === "GET"){
+    if (ext == "") {
+      let pathname = q.pathname.toLowerCase();
+      if (pathname !== "/") {
+        if (pathname === "/index") { filename = maindir + indexpage; }
+        else {
+          // if (q.pathname === "/about" || q.pathname === "/resume") 
+          switch (pathname){
+            case "/about":
+            case "/resume":
+            case "/projects":
+            case "/debug":
+              filename = maindir + infodir + q.pathname;
+              break;
+
+            // API calls here
+            case "/sbreadhs":
+              isAPI = true;
+              SBAPI_readHS.readHS().then(data => {
+                contentType = "application/json";
+                res.writeHead(404, {'Content-Type': contentType});
+                apidata = JSON.stringify(data, null, 2);
+                res.write(apidata);
+                res.end();
+              });
+              break;
+              
         }
-        
       }
     }
     else { filename = maindir + indexpage; } // default to main page instead
     filename += ".html"; // hide URL filetype by forcing file type addition to filename
   }
+
   // Resources have different extension names so we adjust the content type instead.
   else {
     filename += q.pathname;
@@ -54,24 +77,36 @@ http.createServer(function(req, res) {
       case ".gif":
         contentType = "image/gif";
         break;
+      }
     }
   }
   
   // start with the index.html
-  fs.readFile(filename, function(err, data) {
-    if (err) {
-        res.writeHead(404, {'Content-Type': contentType});
-        console.log(err.code);
-        return res.end("404 Not Found");
-    }
+  if (!isAPI) {
+    fs.readFile(filename, function(err, data) {
+      if (err) {
+          res.writeHead(404, {'Content-Type': contentType});
+          console.log(err.code);
+          return res.end("404 Not Found");
+      }
 
     // check if the file being read is an html or 
+      res.writeHead(200, {'Content-Type': contentType});
+      res.write(data);
+      console.log("Incoming Request: " + req.url);
+      return res.end();
+    });
+  }
 
+  /*
+  else {
+    console.log("API Call made: " + req.url);
+    // just write the data directly onto the page
     res.writeHead(200, {'Content-Type': contentType});
-    res.write(data);
+    res.write(apidata);
     console.log("Incoming Request: " + req.url);
     return res.end();
-  });
+  }*/
   
 }).listen(port);
 
