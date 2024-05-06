@@ -63,22 +63,58 @@ http.createServer(function(req, res) {
   }
 
   // Resources have different extension names so we adjust the content type instead.
-  else {
-    filename += q.pathname;
-    console.log("Loading Resource: " + filename);
-    switch (ext) {
-      case ".jpg":
-      case ".jpeg":
-        contentType = "image/jpeg";
-        break;
-      case ".png":
-        contentType = "image/png";
-        break;
-      case ".gif":
-        contentType = "image/gif";
-        break;
+    else {
+      filename += q.pathname;
+      console.log("Loading Resource: " + filename);
+      switch (ext) {
+        case ".jpg":
+        case ".jpeg":
+          contentType = "image/jpeg";
+          break;
+        case ".png":
+          contentType = "image/png";
+          break;
+        case ".gif":
+          contentType = "image/gif";
+          break;
       }
     }
+  }
+  else if (req.method === "POST") {
+    if (ext == "") {
+      let pathname = q.pathname.toLowerCase();
+      if (pathname !== "/") {
+        switch (pathname){
+          case "/sbupdatehs":
+
+            isAPI = true;
+
+            let body = '';
+            req.on('data', chunk => {
+              body += chunk.toString();
+            });
+
+            req.on('end', () => {
+              let postData = JSON.parse(body);
+              console.log("Post Data received: ");
+              console.log(postData);
+  
+              SBAPI_readHS.recordHS(postData).then(data => {
+                contentType = "application/json";
+                res.writeHead(404, {'Content-Type': contentType});
+                apidata = JSON.stringify(data, null, 2);
+                res.write(apidata);
+                res.end();
+              });
+            })
+            
+            break;          
+          }
+        }
+      }
+    else { filename = maindir + indexpage; } // default to main page instead
+    
+    filename += ".html"; // hide URL filetype by forcing file type addition to filename
   }
   
   // start with the index.html
