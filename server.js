@@ -24,6 +24,7 @@ http.createServer(function(req, res) {
 
   let filename = ".";
   let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
+  let gameMode = "";
   
   // start checking the request method here so we can include behaviors for API methods
   // routing starts here.
@@ -46,13 +47,24 @@ http.createServer(function(req, res) {
             // API calls here
             case "/sbreadhs":
               isAPI = true;
-              let result = SBAPI_readHS.readHS("unlimited");
-              if (typeof result === 'string') {
+              gameMode = q.query.mode;
+              if (!gameMode || (gameMode !== "ul" && gameMode !=="ta")) {
+                  contentType = "text/html";
+                  res.writeHead(404, {'Content-Type': contentType});
+                  res.write("Error: No Game Mode specified");
+                  res.end();
+              }
+              else {
+                if (gameMode == "ul") gameMode = "unlimited";
+                else if (gameMode == "ta") gameMode = "time attack";
+
+                let result = SBAPI_readHS.readHS(gameMode);
+                if (typeof result === 'string') {
                   contentType = "text/html";
                   res.writeHead(404, {'Content-Type': contentType});
                   res.write(err);
                   res.end();
-              }
+                }
               else {
                 Promise.resolve(result)
                   .then(data => {
@@ -68,6 +80,7 @@ http.createServer(function(req, res) {
                     res.write(err);
                     res.end();
                   });
+                }
               }
               break;
               
@@ -115,7 +128,7 @@ http.createServer(function(req, res) {
           case "sbupdatehs":
             isAPI = true;
             let body = '';
-            let gameMode = "";
+            gameMode = '';
             
             req.on('data', chunk => {
               body += chunk.toString();
