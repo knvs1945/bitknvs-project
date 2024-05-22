@@ -18,11 +18,6 @@ let db = new sqlite3.Database(path.join(__dirname, '/spykeball.sqlite3'), (err) 
 let hsTableUL = "highscoresUL";
 let hsTableTA = "highscoresTA";
 
-// general question for running queries
-function runQuery(query, callback) {
-    db.run(query, callback);
-}
-
 // check for both Unlimited and Time Attack tables
 function checkTables(tableName) {
     // check if our table already exists:
@@ -39,7 +34,7 @@ function checkTables(tableName) {
             console.log("Highscore table does not exist. Creating table: " + tableName );
             if (tableName === hsTableUL) query = `CREATE TABLE ${tableName} ( id INTEGER PRIMARY KEY, name TEXT, score INTEGER, targets INTEGER, date DATE )`;
             else if (tableName === hsTableTA) query = `CREATE TABLE ${tableName} ( id INTEGER PRIMARY KEY, name TEXT, score INTEGER, targets INTEGER, time TIME, date DATE )`;
-            runQuery(query);
+            db.run(query);
         }
     });
 }
@@ -50,136 +45,68 @@ function startDB() {
     checkTables(hsTableTA);
 }
 
-// check if 
-
 // read HS data here 
-async function readHS() {
-    console.log("READ HS CALLED");
-    const data = fileRead(filename);
-    return data;
-}
+function readHS(gameMode, column = "score") {
+    let tableName = "";
 
-// record new HS data here
-async function recordHS(newData) {
+    if (!gameMode) return "Error: No Gamemode Selected";
+    if (gameMode === "unlimited") tableName = hsTableUL;
+    else if (gameMode === "time attack") tableName = hsTableTA;
 
-    let msg = true;
-    try {
-        if (typeof(newData) !== "object") {
-            console.log("Data to wrtie is not a valid JSON object");
-            return "Invalid Data";
-        }
-        msg = fileWrite(filename, newData);
-        return msg;
+    if (column !== "score" && column !== "targets" && column !== "time") {
+        return `Error: Column ${column} not found `;
     }
-    catch (err) {
-        console.log("object received is invalid");
-        return "Invalid Data";
-    }
-    
-}
 
-// read the file here
-async function fileRead(filename, rowID = 0) {
-    let fileLength = 0;
-    const lineData = [];
-    let lTemp = null;
-
-    console.log("Current filestream: " + filename);
-    // start file stream that reads a file line-by-line
-    const fileStream = fs.createReadStream(filename);
-    const linereader = readLine.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity // identify all \r\n entries in the file as single line breaks
+    let query = `SELECT * FROM ${tableName} ORDER BY ${column} DESC`;
+    // let's return a promise in case the DB takes some time to retrieve the data
+    return new Promise((resolve, reject) => {
+        db.all(query, (err, rows) => {
+            if (err) {
+                reject (err);
+            }
+            else {
+                resolve (rows);
+            }
+        });
     });
-
-    for await (const line of linereader) {
-        fileLength++;
-        if (rowID == 0) {
-            lTemp = line.split(",");
-            lineData.push({
-                rank: lTemp[0],
-                name: lTemp[1],
-                targets: lTemp[2],
-                score: lTemp[3],
-                time: lTemp[4],
-                date: lTemp[5]
-            })
-        }
-        else if (fileLength == rowID) {
-            lTemp = line.split(",");
-            lineData.push({
-                rank: lTemp[0],
-                name: lTemp[1],
-                targets: lTemp[2],
-                score: lTemp[3],
-                time: lTemp[4],
-                date: lTemp[5]
-            })
-        }
-    }
-   
-    return { length: fileLength, data: lineData }
 }
 
-// write the file here
+// write to database here
 // To Post data, must use this body structure:
 // '{"rank":"2", "name":"KJC", "targets":"5", "score":"5", "time":"3.5", "date":"3/5"}'
 // Sample Curl command
 // curl -X POST -d '{"rank":"2", "name":"KJC", "targets":"5", "score":"5", "time":"3.5", "date":"3/5"}' http://localhost:5000/sbupdatehs
 
-async function fileWrite(filename, data) {
-    const lineData = [];
-    let fileLength = 0;
-    let lTemp = null;
-    var scoreArray = [];
-    let strUpdated = "";
-
-    const fileStream = fs.createReadStream(filename);
-    const lineReader = readLine.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-    });
-
-    // get the data from the file by reading line by line
-    for await (const line of lineReader) {
-        fileLength++;
-        scoreArray.push(line);
-        console.log("Length: " + scoreArray.length);
-        strUpdated += line + "\n";
+// record new HS data here
+async function recordHS(gameMode, newData) {
+    let tableName = "";
+    let columns = `('name','score','targets','date')`;
+    let values = `'${newData.name}','${newData.score}','${newData.targets}','${newData.date}'`;
+    
+    // make sure that newData is an object
+    if (typeof newData !== "object") {
+        return `Error: data to write is an invalid object`;
     }
-
-    // Then, sort the new data to be added into the 
-    scoreArray = sortHSData(scoreArray, data);
-
-    // data = JSON.stringify(data);
-    // add to end of line
-    console.log(data);
-    strUpdated += data.rank + "," + data.name + "," + data.targets + "," + data.score + "," + data.time + "," + data.date; 
-    lineReader.close();
-    fileStream.close();
-
-    // write the new file data back
-    const message = await new Promise((resolve, reject) => {
-        fs.writeFile(filename, strUpdated, (err) => {
-            if (err) reject(err);
-            else resolve("Highscore data updated: " + data);
+    if (!gameMode) return "Error: No Gamemode Selected";
+    if (gameMode === "unlimited") tableName = hsTableUL;
+    else if (gameMode === "time attack") {
+        tableName = hsTableTA;
+        columns = `('name','score','targets','time','date')`;
+        values = `'${newData.name}','${newData.score}','${newData.targets}','${newData.time}','${newData.date}'`;
+    }
+    let query = `INSERT INTO ${tableName} ${columns} VALUES (${values})`;
+    
+    // let's return a promise in case the DB takes some time to store the data
+    return new Promise((resolve, reject) => {
+        db.run(query, (err) => {
+            if (err) {
+                reject (err);
+            }
+            else {
+                resolve (`Values stored successfully: ${values}`);
+            }
         });
     });
-
-    return message;
-}
-
-// sort through the score list here and place the new data
-async function sortHSData(scoreList, newScore) {
-
-    console.log("Sorting data through score list: " + scoreList.length);
-    for (var i = 0; i < scoreList.length; i++) {
-        console.log("Score " + i + ":");
-        console.log(scoreList);
-    }
-    console.log(newScore);
-
-    return scoreList;
 }
 
 startDB();

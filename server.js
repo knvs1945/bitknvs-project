@@ -46,13 +46,29 @@ http.createServer(function(req, res) {
             // API calls here
             case "/sbreadhs":
               isAPI = true;
-              SBAPI_readHS.readHS().then(data => {
-                contentType = "application/json";
-                res.writeHead(404, {'Content-Type': contentType});
-                apidata = JSON.stringify(data, null, 2);
-                res.write(apidata);
-                res.end();
-              });
+              let result = SBAPI_readHS.readHS("unlimited");
+              if (typeof result === 'string') {
+                  contentType = "text/html";
+                  res.writeHead(404, {'Content-Type': contentType});
+                  res.write(err);
+                  res.end();
+              }
+              else {
+                Promise.resolve(result)
+                  .then(data => {
+                    contentType = "application/json";
+                    res.writeHead(200, {'Content-Type': contentType});
+                    apidata = JSON.stringify(data, null, 2);
+                    res.write(apidata);
+                    res.end();
+                  })
+                  .catch(err => {
+                    contentType = "text/html";
+                    res.writeHead(404, {'Content-Type': contentType});
+                    res.write(err);
+                    res.end();
+                  });
+              }
               break;
               
         }
@@ -83,13 +99,24 @@ http.createServer(function(req, res) {
   else if (req.method === "POST") {
     if (ext == "") {
       let pathname = q.pathname.toLowerCase();
-      if (pathname !== "/") {
-        switch (pathname){
-          case "/sbupdatehs":
-
+      let pathParts = pathname.split('/');
+      if (!pathParts[2] || (pathParts[2] !== "ul" && pathParts[2] !== "ta")) {
+        console.log("RecordHS Table ID unidentified: ");
+        console.log(pathParts);
+        isAPI = true;
+        contentType = "text/html";
+        res.writeHead(404, {'Content-Type': contentType});
+        res.write("RecordHS: Table ID not found");
+        res.end();
+      }
+      else if (pathParts.length > 1) {
+        console.log("Going into path switches..." );
+        switch (pathParts[1]){
+          case "sbupdatehs":
             isAPI = true;
-
             let body = '';
+            let gameMode = "";
+            
             req.on('data', chunk => {
               body += chunk.toString();
             });
@@ -97,15 +124,27 @@ http.createServer(function(req, res) {
             req.on('end', () => {
               let postData = JSON.parse(body);
               console.log("Post Data received: ");
-              console.log(postData);
-  
-              SBAPI_readHS.recordHS(postData).then(data => {
-                contentType = "application/json";
-                res.writeHead(404, {'Content-Type': contentType});
-                apidata = JSON.stringify(data, null, 2);
-                res.write(apidata);
+              console.log(postData); 
+              if (pathParts[2] == "ul") gameMode = "unlimited";
+              else if (pathParts[2] == "ta") gameMode = "time attack";
+              console.log("Game mode Table check: " + gameMode);
+
+              let result = SBAPI_readHS.recordHS(gameMode, postData);
+              if (typeof result === "string") {
+                contentType = "text/html";
+                res.writeHead(200, {'Content-Type': contentType});
+                res.write(result);
                 res.end();
-              });
+              }
+              else {
+                result.then(data => {
+                  contentType = "application/json";
+                  res.writeHead(200, {'Content-Type': contentType});
+                  apidata = JSON.stringify(data, null, 2);
+                  res.write(apidata);
+                  res.end();
+                });
+              }
             })
             
             break;          
