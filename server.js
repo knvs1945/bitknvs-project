@@ -25,6 +25,7 @@ http.createServer(function(req, res) {
   let filename = ".";
   let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
   let gameMode = "";
+  let column, order;
   
   // start checking the request method here so we can include behaviors for API methods
   // routing starts here.
@@ -48,6 +49,10 @@ http.createServer(function(req, res) {
             case "/sbreadhs":
               isAPI = true;
               gameMode = q.query.mode;
+              column = q.query.sort;
+              order = q.query.order;
+              
+              // check if gameMode parameter is valid entry
               if (!gameMode || (gameMode !== "ul" && gameMode !=="ta")) {
                   contentType = "text/html";
                   res.writeHead(404, {'Content-Type': contentType});
@@ -55,35 +60,45 @@ http.createServer(function(req, res) {
                   res.end();
               }
               else {
+                // check if column parameter is valid entry, or default to "score"
+                if (!column || (column !== "targets" && column !== "time" && column !== "date" && column !== "name")) {
+                  column = "score";
+                } 
+                else if (gameMode == "ul" && column == "time") {
+                  column = "score";
+                }
+
+                // ensure that the order parameter received, if it is present
+                order = (order && (order == "asc" || order == "desc")) ? order : "desc";
+
                 if (gameMode == "ul") gameMode = "unlimited";
                 else if (gameMode == "ta") gameMode = "time attack";
 
-                let result = SBAPI_readHS.readHS(gameMode);
+                let result = SBAPI_readHS.readHS(gameMode, column, order);
                 if (typeof result === 'string') {
                   contentType = "text/html";
                   res.writeHead(404, {'Content-Type': contentType});
-                  res.write(err);
+                  res.write(result);
                   res.end();
                 }
-              else {
-                Promise.resolve(result)
-                  .then(data => {
-                    contentType = "application/json";
-                    res.writeHead(200, {'Content-Type': contentType});
-                    apidata = JSON.stringify(data, null, 2);
-                    res.write(apidata);
-                    res.end();
-                  })
-                  .catch(err => {
-                    contentType = "text/html";
-                    res.writeHead(404, {'Content-Type': contentType});
-                    res.write(err);
-                    res.end();
-                  });
+                else {
+                  Promise.resolve(result)
+                    .then(data => {
+                      contentType = "application/json";
+                      res.writeHead(200, {'Content-Type': contentType});
+                      apidata = JSON.stringify(data, null, 2);
+                      res.write(apidata);
+                      res.end();
+                    })
+                    .catch(err => {
+                      contentType = "text/html";
+                      res.writeHead(404, {'Content-Type': contentType});
+                      res.write(err);
+                      res.end();
+                    });
+                  }
                 }
-              }
               break;
-              
         }
       }
     }

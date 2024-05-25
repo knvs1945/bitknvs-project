@@ -46,18 +46,18 @@ function startDB() {
 }
 
 // read HS data here 
-function readHS(gameMode, column = "score") {
+function readHS(gameMode, column = "score", order = "desc") {
     let tableName = "";
-
     if (!gameMode) return "Error: No Gamemode Selected";
     if (gameMode === "unlimited") tableName = hsTableUL;
     else if (gameMode === "time attack") tableName = hsTableTA;
 
-    if (column !== "score" && column !== "targets" && column !== "time") {
+    if (order == "desc" || order == "asc") order = order.toUpperCase();
+    if (column !== "name" && column !== "score" && column !== "targets" && column !== "time" && column !== "date") {
         return `Error: Column ${column} not found `;
     }
 
-    let query = `SELECT * FROM ${tableName} ORDER BY ${column} DESC`;
+    let query = `SELECT * FROM ${tableName} ORDER BY ${column} ${order}`;
     // let's return a promise in case the DB takes some time to retrieve the data
     return new Promise((resolve, reject) => {
         db.all(query, (err, rows) => {
@@ -76,6 +76,7 @@ function readHS(gameMode, column = "score") {
 // '{"rank":"2", "name":"KJC", "targets":"5", "score":"5", "time":"3.5", "date":"3/5"}'
 // Sample Curl command
 // curl -X POST -d '{"rank":"2", "name":"KJC", "targets":"5", "score":"5", "time":"3.5", "date":"3/5"}' http://localhost:5000/sbupdatehs
+// curl -X POST -d '{"rank":"218", "name":"john mitchell", "targets":"13", "score":455, "time":"3.85", "date":"5/5"}' "http://bitknvs-30e00398cef5.herokuapp.com/sbupdatehs/ta"
 
 // record new HS data here
 async function recordHS(gameMode, newData) {
