@@ -84,9 +84,12 @@ http.createServer(function(req, res) {
                 else {
                   Promise.resolve(result)
                     .then(data => {
+                      let returnData = {
+                        highscores: data
+                      };
                       contentType = "application/json";
                       res.writeHead(200, {'Content-Type': contentType});
-                      apidata = JSON.stringify(data, null, 2);
+                      apidata = JSON.stringify(returnData, null, 2);
                       res.write(apidata);
                       res.end();
                     })
