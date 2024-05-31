@@ -88,7 +88,17 @@ http.createServer(function(req, res) {
                         highscores: data
                       };
                       contentType = "application/json";
-                      res.writeHead(200, {'Content-Type': contentType});
+                      /*Access-Control-Allow-Origin: https://yourgame.itch.io
+                      Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+                      Access-Control-Allow-Headers: Content-Type*/
+                      
+                      res.writeHead(200, {
+                        'Content-Type': contentType,
+                        'Access-Control-Allow-Origin': "https://yourgame.itch.io",
+                        'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+                        'Access-Control-Allow-Headers': contentType
+                      });
+                      
                       apidata = JSON.stringify(returnData, null, 2);
                       res.write(apidata);
                       res.end();
@@ -153,6 +163,7 @@ http.createServer(function(req, res) {
             });
 
             req.on('end', () => {
+              console.log(body);
               let postData = JSON.parse(body);
               console.log("Post Data received: ");
               console.log(postData); 
@@ -170,7 +181,12 @@ http.createServer(function(req, res) {
               else {
                 result.then(data => {
                   contentType = "application/json";
-                  res.writeHead(200, {'Content-Type': contentType});
+                  res.writeHead(200, {
+                    'Content-Type': contentType,
+                    'Access-Control-Allow-Origin': "https://yourgame.itch.io",
+                    'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+                    'Access-Control-Allow-Headers': contentType
+                  });
                   apidata = JSON.stringify(data, null, 2);
                   res.write(apidata);
                   res.end();
