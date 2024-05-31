@@ -209,9 +209,17 @@ http.createServer(function(req, res) {
           }
         }
       }
-    else { filename = maindir + indexpage; } // default to main page instead
-    
+    else { filename = maindir + indexpage; } // default to main page instead    
     filename += ".html"; // hide URL filetype by forcing file type addition to filename
+  }
+  else if (req.method === "OPTIONS") {
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+      'Access-Control-Allow-Headers': contentType
+    });
+    res.end();
   }
   
   // start with the index.html
