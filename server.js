@@ -81,7 +81,7 @@ http.createServer(function(req, res) {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': "*",
                     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                    'Access-Control-Allow-Headers': "Content-Type, Authorization"
+                    'Access-Control-Allow-Headers': "Content-Type"
                   });
                   res.write(result);
                   res.end();
@@ -97,7 +97,7 @@ http.createServer(function(req, res) {
                         'Content-Type': contentType,
                         'Access-Control-Allow-Origin': "*",
                         'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                        'Access-Control-Allow-Headers': "Content-Type, Authorization"
+                        'Access-Control-Allow-Headers': "Content-Type"
                       });
                       
                       apidata = JSON.stringify(returnData, null, 2);
@@ -106,7 +106,12 @@ http.createServer(function(req, res) {
                     })
                     .catch(err => {
                       contentType = "text/html";
-                      res.writeHead(404, {'Content-Type': contentType});
+                      res.writeHead(404, {
+                        'Content-Type': contentType,
+                        'Access-Control-Allow-Origin': "*",
+                        'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+                        'Access-Control-Allow-Headers': "Content-Type"
+                      });
                       res.write(err);
                       res.end();
                     });
