@@ -174,7 +174,12 @@ http.createServer(function(req, res) {
               let result = SBAPI_readHS.recordHS(gameMode, postData);
               if (typeof result === "string") {
                 contentType = "text/html";
-                res.writeHead(200, {'Content-Type': contentType});
+                res.writeHead(200, {
+                  'Content-Type': contentType,
+                  'Access-Control-Allow-Origin': "*",
+                  'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+                  'Access-Control-Allow-Headers': contentType
+                });
                 res.write(result);
                 res.end();
               }
