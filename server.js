@@ -77,7 +77,12 @@ http.createServer(function(req, res) {
                 let result = SBAPI_readHS.readHS(gameMode, column, order);
                 if (typeof result === 'string') {
                   contentType = "text/html";
-                  res.writeHead(404, {'Content-Type': contentType});
+                  res.writeHead(404, {
+                    'Content-Type': contentType,
+                    'Access-Control-Allow-Origin': "*",
+                    'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+                    'Access-Control-Allow-Headers': contentType
+                  });
                   res.write(result);
                   res.end();
                 }
@@ -87,11 +92,7 @@ http.createServer(function(req, res) {
                       let returnData = {
                         highscores: data
                       };
-                      contentType = "application/json";
-                      /*Access-Control-Allow-Origin: https://yourgame.itch.io
-                      Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
-                      Access-Control-Allow-Headers: Content-Type*/
-                      
+                      contentType = "application/json";                      
                       res.writeHead(200, {
                         'Content-Type': contentType,
                         'Access-Control-Allow-Origin': "*",
@@ -146,7 +147,12 @@ http.createServer(function(req, res) {
         console.log(pathParts);
         isAPI = true;
         contentType = "text/html";
-        res.writeHead(404, {'Content-Type': contentType});
+        res.writeHead(404, {
+          'Content-Type': contentType,
+          'Access-Control-Allow-Origin': "*",
+          'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+          'Access-Control-Allow-Headers': contentType
+        });
         res.write("RecordHS: Table ID not found");
         res.end();
       }
