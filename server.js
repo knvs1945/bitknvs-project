@@ -81,7 +81,7 @@ http.createServer(function(req, res) {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': "*",
                     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                    'Access-Control-Allow-Headers': contentType
+                    'Access-Control-Allow-Headers': "Content-Type, Authorization"
                   });
                   res.write(result);
                   res.end();
@@ -97,7 +97,7 @@ http.createServer(function(req, res) {
                         'Content-Type': contentType,
                         'Access-Control-Allow-Origin': "*",
                         'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                        'Access-Control-Allow-Headers': contentType
+                        'Access-Control-Allow-Headers': "Content-Type, Authorization"
                       });
                       
                       apidata = JSON.stringify(returnData, null, 2);
@@ -151,7 +151,7 @@ http.createServer(function(req, res) {
           'Content-Type': contentType,
           'Access-Control-Allow-Origin': "*",
           'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-          'Access-Control-Allow-Headers': contentType
+          'Access-Control-Allow-Headers': "Content-Type, Authorization"
         });
         res.write("RecordHS: Table ID not found");
         res.end();
@@ -184,7 +184,7 @@ http.createServer(function(req, res) {
                   'Content-Type': contentType,
                   'Access-Control-Allow-Origin': "*",
                   'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                  'Access-Control-Allow-Headers': contentType
+                  'Access-Control-Allow-Headers': "Content-Type, Authorization"
                 });
                 res.write(result);
                 res.end();
@@ -196,7 +196,7 @@ http.createServer(function(req, res) {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': "*",
                     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                    'Access-Control-Allow-Headers': contentType
+                    'Access-Control-Allow-Headers': "Content-Type, Authorization"
                   });
                   apidata = JSON.stringify(data, null, 2);
                   res.write(apidata);
@@ -213,11 +213,12 @@ http.createServer(function(req, res) {
     filename += ".html"; // hide URL filetype by forcing file type addition to filename
   }
   else if (req.method === "OPTIONS") {
+    contentType = "application/json";
     res.writeHead(200, {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': "*",
       'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-      'Access-Control-Allow-Headers': contentType
+      'Access-Control-Allow-Headers': "Content-Type, Authorization"
     });
     res.end();
   }
