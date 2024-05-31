@@ -94,7 +94,7 @@ http.createServer(function(req, res) {
                       
                       res.writeHead(200, {
                         'Content-Type': contentType,
-                        'Access-Control-Allow-Origin': ["https://bitknvs.itch.io", "https://html-classic.itch.zone"],
+                        'Access-Control-Allow-Origin': "*",
                         'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
                         'Access-Control-Allow-Headers': contentType
                       });
@@ -183,7 +183,7 @@ http.createServer(function(req, res) {
                   contentType = "application/json";
                   res.writeHead(200, {
                     'Content-Type': contentType,
-                    'Access-Control-Allow-Origin': ["https://bitknvs.itch.io", "https://html-classic.itch.zone"],
+                    'Access-Control-Allow-Origin': "*",
                     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
                     'Access-Control-Allow-Headers': contentType
                   });
