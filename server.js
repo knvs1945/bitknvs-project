@@ -30,7 +30,17 @@ http.createServer(function(req, res) {
   // start checking the request method here so we can include behaviors for API methods
   // routing starts here.
 
-  if (req.method === "GET"){
+  if (req.method === "OPTIONS") {
+    contentType = "application/json";
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+      'Access-Control-Allow-Headers': "Content-Type"
+    });
+    res.end();
+  }
+  else if (req.method === "GET"){
     if (ext == "") {
       let pathname = q.pathname.toLowerCase();
       if (pathname !== "/") {
@@ -216,16 +226,6 @@ http.createServer(function(req, res) {
       }
     else { filename = maindir + indexpage; } // default to main page instead    
     filename += ".html"; // hide URL filetype by forcing file type addition to filename
-  }
-  else if (req.method === "OPTIONS") {
-    contentType = "application/json";
-    res.writeHead(200, {
-      'Content-Type': contentType,
-      'Access-Control-Allow-Origin': "*",
-      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
-      'Access-Control-Allow-Headers': "Content-Type"
-    });
-    res.end();
   }
   
   // start with the index.html
