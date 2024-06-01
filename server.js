@@ -36,7 +36,6 @@ http.createServer(function(req, res) {
     
     // start checking the request method here so we can include behaviors for API methods
     // routing starts here.
-
     if (req.method === "OPTIONS") {
       contentType = "application/json";
       res.writeHead(200, {
@@ -250,16 +249,6 @@ http.createServer(function(req, res) {
         return res.end();
       });
     }
-
-    /*
-    else {
-      console.log("API Call made: " + req.url);
-      // just write the data directly onto the page
-      res.writeHead(200, {'Content-Type': contentType});
-      res.write(apidata);
-      console.log("Incoming Request: " + req.url);
-      return res.end();
-    }*/ 
   }
   
   
