@@ -45,7 +45,7 @@ http.createServer(function(req, res) {
         'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
         'Access-Control-Allow-Headers': "Content-Type"
       });
-      res.end();
+      return res.end();
     }
     else if (req.method === "GET"){
       if (ext == "") {
