@@ -155,8 +155,8 @@ http.createServer(function(req, res) {
         res.writeHead(404, {
           'Content-Type': contentType,
           'Access-Control-Allow-Origin': "*",
-          'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-          'Access-Control-Allow-Headers': "Content-Type, Authorization"
+          'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+          'Access-Control-Allow-Headers': "Content-Type"
         });
         res.write("RecordHS: Table ID not found");
         res.end();
@@ -188,8 +188,8 @@ http.createServer(function(req, res) {
                 res.writeHead(200, {
                   'Content-Type': contentType,
                   'Access-Control-Allow-Origin': "*",
-                  'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                  'Access-Control-Allow-Headers': "Content-Type, Authorization"
+                  'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+                  'Access-Control-Allow-Headers': "Content-Type"
                 });
                 res.write(result);
                 res.end();
@@ -200,8 +200,8 @@ http.createServer(function(req, res) {
                   res.writeHead(200, {
                     'Content-Type': contentType,
                     'Access-Control-Allow-Origin': "*",
-                    'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                    'Access-Control-Allow-Headers': "Content-Type, Authorization"
+                    'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+                    'Access-Control-Allow-Headers': "Content-Type"
                   });
                   apidata = JSON.stringify(data, null, 2);
                   res.write(apidata);
@@ -222,8 +222,8 @@ http.createServer(function(req, res) {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': "*",
-      'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-      'Access-Control-Allow-Headers': "Content-Type, Authorization"
+      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+      'Access-Control-Allow-Headers': "Content-Type"
     });
     res.end();
   }
