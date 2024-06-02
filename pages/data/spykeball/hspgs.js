@@ -1,19 +1,31 @@
 const fs = require("fs");
 const readLine = require("readline");
 const path = require("path");
+require('dotenv').config();
 
 // add Postgres module for writing data
 const { Client } = require('pg');
 
 // create or check for highscore DB
-console.log("Running DB Check at: " + path.join(__dirname, '/spykeball'));
-const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'spykeball',
-    user: 'postgres',
-    password: 'thedefender45',
-});
+console.log("Running DB Check for: " + path.join(__dirname, '/spykeball'));
+let client;
+if (process.env.NODE_ENV === 'prod') {
+    client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    })
+}
+else {
+    client = new Client({
+        host: 'localhost',
+        port: 5432,
+        database: 'spykeball',
+        user: 'postgres',
+        password: 'thedefender45',
+    });
+}
 
 // connect to client
 client.connect(err => {

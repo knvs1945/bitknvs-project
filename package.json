@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/knvs1945/bitknvs-project#readme",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "nodemon": "^3.1.0",
     "pg": "^8.11.5",
     "sqlite3": "^5.1.7"
