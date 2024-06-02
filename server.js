@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 // API modules for the games
-const SBAPI_readHS = require("./pages/data/spykeball/hs");
+const SBAPI_readHS = require("./pages/data/spykeball/hspgs");
 
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
