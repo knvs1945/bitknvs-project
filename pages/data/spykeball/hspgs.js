@@ -121,22 +121,36 @@ async function recordHS(gameMode, newData) {
     if (!gameMode) return "Error: No Gamemode Selected";
     if (gameMode === "unlimited") {
         tableName = hsTableUL;
-        query = `INSERT INTO ${tableName} ${columns} VALUES ($1, $2, $3, $4)`;
+        query = `INSERT INTO ${tableName} ${columns} VALUES ($1, $2, $3, $4) RETURNING id`;
     }
     else if (gameMode === "time attack") {
         tableName = hsTableTA;
         columns = `(name,score,targets,time,date)`;
-        query = `INSERT INTO ${tableName} ${columns} VALUES ($1, $2, $3, $4::interval, $5)`;
+        query = `INSERT INTO ${tableName} ${columns} VALUES ($1, $2, $3, $4::interval, $5) RETURNING id`; // return the ID so we can poll what its current ranking is
         values = [newData.name, newData.score, newData.targets, newData.time, newData.date]; 
     }
     // let's return a promise in case the DB takes some time to store the data
     return new Promise((resolve, reject) => {
-        client.query(query, values, (err) => {
+        client.query(query, values, (err, res) => {
             if (err) {
                 reject (err);
             }
             else {
-                resolve (`Values stored successfully: ${values}`);
+                const scoreID = res.rows[0].id;
+                // insert successful, now we check what the rank of the current ID is:
+                // let rankQuery = `SELECT RANK () OVER (ORDER by score DESC) FROM ${tableName} WHERE id = ${scoreID}`;
+                let rankQuery = `SELECT id, ranking FROM 
+                    (SELECT id, RANK () OVER (ORDER BY score DESC) as ranking FROM public.highscoresul) as subquery 
+                    WHERE id = ${scoreID};`;
+                client.query(rankQuery, (err, res) => {
+                    if (err) {
+                        reject (err);
+                    }
+                    else {
+                        const rank = res.rows[0].ranking;
+                        resolve (`${rank}`);
+                    }
+                });
             }
         });
     });
