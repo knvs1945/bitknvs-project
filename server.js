@@ -32,7 +32,7 @@ http.createServer(function(req, res) {
     let filename = ".";
     let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
     let gameMode = "";
-    let column, order;
+    let column, order, page, limit;
     
     // start checking the request method here so we can include behaviors for API methods
     // routing starts here.
@@ -67,6 +67,8 @@ http.createServer(function(req, res) {
                 gameMode = q.query.mode;
                 column = q.query.sort;
                 order = q.query.order;
+                page = parseInt(q.query.page);
+                limit = parseInt(q.query.limit);
                 
                 // check if gameMode parameter is valid entry
                 if (!gameMode || (gameMode !== "ul" && gameMode !=="ta")) {
@@ -77,6 +79,7 @@ http.createServer(function(req, res) {
                 }
                 else {
                   // check if column parameter is valid entry, or default to "score"
+                  let columnList = ["targets", "time", "date", "name"];
                   if (!column || (column !== "targets" && column !== "time" && column !== "date" && column !== "name")) {
                     column = "score";
                   } 
@@ -90,7 +93,11 @@ http.createServer(function(req, res) {
                   if (gameMode == "ul") gameMode = "unlimited";
                   else if (gameMode == "ta") gameMode = "time attack";
 
-                  let result = SBAPI_readHS.readHS(gameMode, column, order);
+                  // ensure that the page and limit entries are integers or are less than 1, defaults them to 1 & 10 respectively
+                  if (isNaN(page) || !Number.isInteger(page) || page < 1) page = 1;
+                  if (isNaN(limit) || !Number.isInteger(limit) || limit < 1) limit = 10;
+
+                  let result = SBAPI_readHS.readHS(gameMode, column, order, page, limit);
                   if (typeof result === 'string') {
                     contentType = "text/html";
                     res.writeHead(404, {

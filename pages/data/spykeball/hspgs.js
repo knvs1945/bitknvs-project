@@ -64,8 +64,9 @@ function startDB() {
 }
 
 // read HS data here 
-function readHS(gameMode, column = "score", order = "desc") {
+function readHS(gameMode, column = "score", order = "desc", page = 1, limit = 10) {
     let tableName = "", query = "";
+    let offset = (page - 1) * limit; // use "pages" instead of starting points to make pagination easier
     if (order !== "desc" && order !== "asc") return `Error: Invalid order setting ${order} `;
     order = order.toUpperCase();
     
@@ -81,11 +82,11 @@ function readHS(gameMode, column = "score", order = "desc") {
 
     if (gameMode === "unlimited") {
         tableName = hsTableUL;
-        query = `SELECT name, score, targets, TO_CHAR(date, 'MM/DD/YY') as date FROM ${tableName} ORDER BY ${column} ${order}`;
+        query = `SELECT name, score, targets, TO_CHAR(date, 'MM/DD/YY') as date FROM ${tableName} ORDER BY ${column} ${order} LIMIT ${limit} OFFSET ${offset}`;
     }
     else if (gameMode === "time attack") {
         tableName = hsTableTA;
-        query = `SELECT name, score, targets, TO_CHAR(time, 'MI:SS') as time, TO_CHAR(date, 'MM/DD/YY') as date FROM ${tableName} ORDER BY ${column} ${order}`;
+        query = `SELECT name, score, targets, TO_CHAR(time, 'MI:SS') as time, TO_CHAR(date, 'MM/DD/YY') as date FROM ${tableName} ORDER BY ${column} ${order} LIMIT ${limit} OFFSET ${offset}`;
     }
 
     // let's return a promise in case the DB takes some time to retrieve the data
