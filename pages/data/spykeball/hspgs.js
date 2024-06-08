@@ -66,7 +66,9 @@ function startDB() {
 // read HS data here 
 function readHS(gameMode, column = "score", order = "desc", page = 1, limit = 10) {
     let tableName = "", query = "";
+    let queryCount = "";
     let offset = (page - 1) * limit; // use "pages" instead of starting points to make pagination easier
+    let data = {};
     if (order !== "desc" && order !== "asc") return `Error: Invalid order setting ${order} `;
     order = order.toUpperCase();
     
@@ -89,17 +91,33 @@ function readHS(gameMode, column = "score", order = "desc", page = 1, limit = 10
         query = `SELECT name, score, targets, TO_CHAR(time, 'MI:SS') as time, TO_CHAR(date, 'MM/DD/YY') as date FROM ${tableName} ORDER BY ${column} ${order} LIMIT ${limit} OFFSET ${offset}`;
     }
 
-    // let's return a promise in case the DB takes some time to retrieve the data
+    // construct the count query and execute it first
+    queryCount = `SELECT COUNT (*) FROM ${tableName}`;
+
+    // let's return a promise in case the DB takes some time to retrieve the data. First get the amount of data
     return new Promise((resolve, reject) => {
-        client.query(query, (err, res) => {
+        client.query(queryCount, (err, res) => {
             if (err) {
                 reject (err);
             }
             else {
-                resolve (res.rows);
+                const count = res.rows[0].count;
+
+                // now retrieve the data 
+                client.query(query, (err, res) => {
+                    if (err) {
+                        reject (err);
+                    }
+                    else {
+                        resolve ({ length: count, data: res.rows });
+                    }
+                });
             }
-        });
+        })
+        
     });
+
+
 }
 
 // write to database here

@@ -113,7 +113,8 @@ http.createServer(function(req, res) {
                     Promise.resolve(result)
                       .then(data => {
                         let returnData = {
-                          highscores: data
+                          highscores: data.data,
+                          length: data.length
                         };
                         contentType = "application/json";                      
                         res.writeHead(200, {
