@@ -57,6 +57,7 @@ http.createServer(function(req, res) {
               case "/about":
               case "/resume":
               case "/projects":
+              case "/downloads":
               case "/debug":
                 filename = maindir + infodir + q.pathname;
                 break;
