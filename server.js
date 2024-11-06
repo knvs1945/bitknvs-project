@@ -1,266 +1,223 @@
-const http = require("http");
-const url = require("url");
-const fs = require("fs");
-const path = require("path");
+const express = require('express');
+const url = require('url');
+const fs = require('fs');
+const path = require('path');
 
 // API modules for the games
 const SBAPI_readHS = require("./pages/data/spykeball/hspgs");
 
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
+const urlLogging = true;
 
 // file entries & directories
-var maindir = "./pages";
-var infodir = "/info";
-var indexpage = "/index";
+const maindir = "./pages";
+const partsdir = "/parts";
+const infodir = "/info";
+const indexpage = "/index";
 
-// Server Object
-http.createServer(function(req, res) {
+// app server setup - static pages
+const app = new express();
+app.use(express.static((path.join(__dirname, maindir))));
 
-  // HTTP-to-HTTPS PROCESSING HERE: process secure requests that are passed by hosting site e.g. heroku
+// TO-DO: add visitor logging into textfiles
+app.use((req, res, next) => {
+    if (urlLogging) console.log("Received request: ", req.method, ": ", req.url);
+    next();
+});
+
+// route functions
+function setupCORS(req, res) {
   if (process.env.PORT && req.headers['x-forwarded-proto'] === 'http') {
     res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
     res.end();
+    return true;
+  }
+  else return false;
+}
+
+function loadIndex(req, res) {
+  if (setupCORS()) return;
+  let fullPath = path.join(__dirname, maindir, indexpage + ".html");
+  console.log('loading index: ' +  fullPath);
+  res.sendFile(fullPath);
+}
+
+// load page parts like navbar and footer
+function loadParts(req, res) {
+  if (setupCORS()) return;
+  let fullPath = path.join(__dirname, req.path);
+  res.sendFile(fullPath);
+}
+
+// load page contents
+function loadContent(req, res) {
+  if (setupCORS()) return;
+  let pageloc = req.path;    
+  let fullPath = path.join(__dirname, maindir, infodir, pageloc + ".html");
+  console.log("Redirecting to: ", fullPath );
+  res.sendFile(fullPath);
+}
+
+// database get content
+function loadGetDB(req, res) {
+  if (setupCORS()) return;
+  let q = url.parse(req.url, true);
+  let urlPath = req.path;
+  let urlParts = urlPath.split('/');
+  let queryParts = { gameMode: null, column: null, order: null, page: null, limit: null };
+  queryParts.gameMode = q.query.mode;
+  queryParts.column = q.query.sort;
+  queryParts.order = q.query.order;
+  queryParts.page = parseInt(q.query.page);
+  queryParts.limit = parseInt(q.query.limit);
+
+  // reject request if gameMode is not present or can't be identified
+  if (!queryParts.gameMode || (queryParts.gameMode !== "ul" && queryParts.gameMode !== "ta")) {
+    res.writeHead(404, {
+      'Content-Type': "text/html",
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+      'Access-Control-Allow-Headers': "Content-Type"
+    });
+    res.write("Error: No Game Mode Specified");
+    res.end();
+  }
+  else dbGetSpykeballData(req, res, queryParts);
+  
+}
+
+
+// database post content
+function loadPostDB(req, res) {
+  if (setupCORS()) return;
+  let urlPath = req.path;
+  let urlParts = urlPath.split('/');
+  // reject request if table is not present or can't be identified
+  if (!urlParts[2] || (urlParts[2] !== "ul" && urlParts[2] !== "ta")) {
+    console.log("RecordHS Table ID unidentified: ", urlParts);
+    res.writeHead(404, {
+      'Content-Type': "text/html",
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+      'Access-Control-Allow-Headers': "Content-Type"
+    });
+    res.write("RecordHS: TableID not found");
+    res.end();
   }
   else {
-    let q = url.parse(req.url, true);
-    let ext = "";
-    let isAPI = false;
-    let apidata;
-    if (q.pathname) ext = path.extname(q.pathname);
-
-    let filename = ".";
-    let contentType = "text/html"; // use text/html by default, and change accordingly if images are detected
-    let gameMode = "";
-    let column, order, page, limit;
-    
-    // start checking the request method here so we can include behaviors for API methods
-    // routing starts here.
-    if (req.method === "OPTIONS") {
-      contentType = "application/json";
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Access-Control-Allow-Origin': "*",
-        'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
-        'Access-Control-Allow-Headers': "Content-Type"
-      });
-      return res.end();
-    }
-    else if (req.method === "GET"){
-      if (ext == "") {
-        let pathname = q.pathname.toLowerCase();
-        if (pathname !== "/") {
-          if (pathname === "/index") { filename = maindir + indexpage; }
-          else {
-            // if (q.pathname === "/about" || q.pathname === "/resume") 
-            switch (pathname){
-              case "/about":
-              case "/resume":
-              case "/projects":
-              case "/downloads":
-              case "/debug":
-                filename = maindir + infodir + q.pathname;
-                break;
-
-              // API calls here
-              case "/sbreadhs":
-                isAPI = true;
-                gameMode = q.query.mode;
-                column = q.query.sort;
-                order = q.query.order;
-                page = parseInt(q.query.page);
-                limit = parseInt(q.query.limit);
-                
-                // check if gameMode parameter is valid entry
-                if (!gameMode || (gameMode !== "ul" && gameMode !=="ta")) {
-                    contentType = "text/html";
-                    res.writeHead(404, {'Content-Type': contentType});
-                    res.write("Error: No Game Mode specified");
-                    res.end();
-                }
-                else {
-                  // check if column parameter is valid entry, or default to "score"
-                  let columnList = ["targets", "time", "date", "name"];
-                  if (!column || (column !== "targets" && column !== "time" && column !== "date" && column !== "name")) {
-                    column = "score";
-                  } 
-                  else if (gameMode == "ul" && column == "time") {
-                    column = "score";
-                  }
-
-                  // ensure that the order parameter received, if it is present
-                  order = (order && (order == "asc" || order == "desc")) ? order : "desc";
-
-                  if (gameMode == "ul") gameMode = "unlimited";
-                  else if (gameMode == "ta") gameMode = "time attack";
-
-                  // ensure that the page and limit entries are integers or are less than 1, defaults them to 1 & 10 respectively
-                  if (isNaN(page) || !Number.isInteger(page) || page < 1) page = 1;
-                  if (isNaN(limit) || !Number.isInteger(limit) || limit < 1) limit = 10;
-
-                  let result = SBAPI_readHS.readHS(gameMode, column, order, page, limit);
-                  if (typeof result === 'string') {
-                    contentType = "text/html";
-                    res.writeHead(404, {
-                      'Content-Type': contentType,
-                      'Access-Control-Allow-Origin': "*",
-                      'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                      'Access-Control-Allow-Headers': "Content-Type"
-                    });
-                    res.write(result);
-                    res.end();
-                  }
-                  else {
-                    Promise.resolve(result)
-                      .then(data => {
-                        let returnData = {
-                          highscores: data.data,
-                          length: data.length
-                        };
-                        contentType = "application/json";                      
-                        res.writeHead(200, {
-                          'Content-Type': contentType,
-                          'Access-Control-Allow-Origin': "*",
-                          'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                          'Access-Control-Allow-Headers': "Content-Type"
-                        });
-                        
-                        apidata = JSON.stringify(returnData, null, 2);
-                        res.write(apidata);
-                        res.end();
-                      })
-                      .catch(err => {
-                        contentType = "text/html";
-                        res.writeHead(404, {
-                          'Content-Type': contentType,
-                          'Access-Control-Allow-Origin': "*",
-                          'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
-                          'Access-Control-Allow-Headers': "Content-Type"
-                        });
-                        res.write(err);
-                        res.end();
-                      });
-                    }
-                  }
-                break;
-            }
-          }
-        }
-      else { filename = maindir + indexpage; } // default to main page instead
-      filename += ".html"; // hide URL filetype by forcing file type addition to filename
-      }
-      // Resources have different extension names so we adjust the content type instead.
-      else {
-        filename += q.pathname;
-        console.log("Loading Resource: " + filename);
-        switch (ext) {
-          case ".jpg":
-          case ".jpeg":
-            contentType = "image/jpeg";
-            break;
-          case ".png":
-            contentType = "image/png";
-            break;
-          case ".gif":
-            contentType = "image/gif";
-            break;
-        }
-      }
-    }
-    else if (req.method === "POST") {
-      if (ext == "") {
-        let pathname = q.pathname.toLowerCase();
-        let pathParts = pathname.split('/');
-        if (!pathParts[2] || (pathParts[2] !== "ul" && pathParts[2] !== "ta")) {
-          console.log("RecordHS Table ID unidentified: ");
-          console.log(pathParts);
-          isAPI = true;
-          contentType = "text/html";
-          res.writeHead(404, {
-            'Content-Type': contentType,
-            'Access-Control-Allow-Origin': "*",
-            'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
-            'Access-Control-Allow-Headers': "Content-Type"
+    if (urlParts.length > 1) {
+      switch(urlParts[1]) {
+        case "sbupdatehs": 
+          let body = "";
+          req.on('data', chunk => {
+            body += chunk.toString();
           });
-          res.write("RecordHS: Table ID not found");
-          res.end();
-        }
-        else if (pathParts.length > 1) {
-          console.log("Going into path switches..." );
-          switch (pathParts[1]){
-            case "sbupdatehs":
-              isAPI = true;
-              let body = '';
-              gameMode = '';
-              
-              req.on('data', chunk => {
-                body += chunk.toString();
-              });
+          req.on('end', () => dbPostSpykeballData(req, res, urlParts[2], body));
 
-              req.on('end', () => {
-                console.log(body);
-                let postData = JSON.parse(body);
-                console.log("Post Data received: ");
-                console.log(postData); 
-                if (pathParts[2] == "ul") gameMode = "unlimited";
-                else if (pathParts[2] == "ta") gameMode = "time attack";
-                console.log("Game mode Table check: " + gameMode);
-
-                let result = SBAPI_readHS.recordHS(gameMode, postData);
-                if (typeof result === "string") {
-                  contentType = "text/plain";
-                  res.writeHead(200, {
-                    'Content-Type': contentType,
-                    'Access-Control-Allow-Origin': "*",
-                    'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
-                    'Access-Control-Allow-Headers': "Content-Type"
-                  });
-                  res.write(result);
-                  res.end();
-                }
-                else {
-                  result.then(data => {
-                    contentType = "application/json";
-                    res.writeHead(200, {
-                      'Content-Type': contentType,
-                      'Access-Control-Allow-Origin': "*",
-                      'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
-                      'Access-Control-Allow-Headers': "Content-Type"
-                    });
-                    apidata = JSON.stringify(data, null, 2);
-                    res.write(apidata);
-                    res.end();
-                  });
-                }
-              })
-              
-              break;          
-            }
-          }
-        }
-      else { filename = maindir + indexpage; } // default to main page instead    
-      filename += ".html"; // hide URL filetype by forcing file type addition to filename
-    }
-    
-    // start with the index.html
-    if (!isAPI) {
-      fs.readFile(filename, function(err, data) {
-        if (err) {
-            res.writeHead(404, {'Content-Type': contentType});
-            console.log(err.code);
-            return res.end("404 Not Found");
-        }
-
-      // check if the file being read is an html or 
-        res.writeHead(200, {'Content-Type': contentType});
-        res.write(data);
-        console.log("Incoming Request: " + req.url);
-        return res.end();
-      });
+          break;
+      }
     }
   }
-  
-  
-}).listen(port);
+}
 
-console.log("Server now listening at port " + port + " - " + process.env.PORT );
+// Spykeball DB actions
+function dbGetSpykeballData (req, res, queryParts) {
+
+  // query parameter checks and defaults
+  if (!queryParts.column || queryParts.column !== "targets" && queryParts.column !== "time" && queryParts.column !== "name" && queryParts.column !== "date") queryParts.column = "score";
+  else if (queryParts.column == "ul" && queryParts.column == "time") queryParts.column = "score";
+  queryParts.order = (queryParts.order && (queryParts.order == "asc" || queryParts.order == "desc")) ? queryParts.order : "desc";
+  if (queryParts.gameMode == "ul") queryParts.gameMode = "unlimited";
+  else if (queryParts.gameMode == "ta") queryParts.gameMode = "time attack";
+  if (isNaN(queryParts.page) || !Number.isInteger(queryParts.page) || queryParts.page < 1) queryParts.page = 1;
+  if (isNaN(queryParts.limit) || !Number.isInteger(queryParts.limit) || queryParts.limit < 1) queryParts.limit = 10;
+
+  let result = SBAPI_readHS.readHS(queryParts.gameMode, queryParts.column, queryParts.order, queryParts.page, queryParts.limit);
+  if (typeof result === 'string') dbSendResult(res, 404, 'text/html', result);
+  else {
+    Promise.resolve(result)
+    .then(data => {
+      let returnData = {
+        highscores: data.data,
+        length: data.length
+      };
+      dbSendResult(res, 200, 'application/json', JSON.stringify(returnData, null, 2));
+    })
+    .catch(err => {
+      dbSendResult(res, 404, 'text/html', err);
+    })
+  }
+}
+
+function dbPostSpykeballData (req, res, tableName, data) {
+  console.log(data);
+  let postData = JSON.parse(data);
+  let gameMode = "unlimited";
+  if (tableName == "ul") gameMode = "unlimited";
+  else if (tableName == "ta") gameMode = "time attack";
+  console.log("Updating table: " + gameMode + " with data: ", postData);
+
+  let result = SBAPI_readHS.recordHS(gameMode, postData);
+  if (typeof result === "string") dbSendResult(res, 200, 'text/plain', result);
+  else {
+    result.then(data => {
+      dbSendResult(res, 200, 'application/json', JSON.stringify(data, null, 2));
+    });    
+  }
+}
+
+// send results from db access
+function dbSendResult(res, id, contentType, result) {
+  res.writeHead(id, {
+    'Content-Type': contentType,
+    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+    'Access-Control-Allow-Headers': "Content-Type"
+  });
+  res.write(result);
+  res.end();
+  
+}
+
+// GET routes
+app.get('/index', loadIndex);
+app.get('/', loadIndex);
+app.get('', loadIndex);
+
+app.get('/pages/parts*', loadParts);
+app.get('/pages/parts*', loadParts);
+app.get('/images/*', loadParts);
+app.get('/pages/data/*', loadParts);
+
+app.get('/about', loadContent);
+app.get('/resume', loadContent);
+app.get('/projects', loadContent);
+app.get('/downloads', loadContent);
+
+app.get('/sbreadhs*', loadGetDB);
+
+// POST routes
+app.post('/index', loadIndex);
+app.post('/', loadIndex);
+
+app.post('/sbupdatehs/*', loadPostDB);
+
+// OPTION routes
+app.options('/', (req, res)=> {
+  let contentType = "application/json";
+  res.writeHead(200, {
+    'Content-Type': contentType,
+    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Methods': "GET, POST, OPTIONS",
+    'Access-Control-Allow-Headers': "Content-Type",
+  });
+  return res.end();
+})
+
+
+
+// routes
+app.listen(port, () => {
+  console.log("Server listening at port: " + port);
+});
