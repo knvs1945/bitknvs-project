@@ -198,9 +198,9 @@ app.get('*/sbreadhs*', loadGetDB);
 
 // POST routes
 app.post('*/index', loadIndex);
-app.post('*/', loadIndex);
+app.post('/', loadIndex);
 
-app.post('*/sbupdatehs/*', loadPostDB);
+app.post('*/sbupdatehs*', loadPostDB);
 
 // OPTION routes
 app.options('/', (req, res)=> {
