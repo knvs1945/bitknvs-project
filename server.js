@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 
 // route functions
 function setupCORS(req, res) {
+
   if (process.env.PORT && req.headers && req.headers['x-forwarded-proto'] === 'http') {
     res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
     res.end();
@@ -37,7 +38,7 @@ function setupCORS(req, res) {
 }
 
 function loadIndex(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   let fullPath = path.join(__dirname, maindir, indexpage + ".html");
   console.log('loading index: ' +  fullPath);
   res.sendFile(fullPath);
@@ -45,14 +46,14 @@ function loadIndex(req, res) {
 
 // load page parts like navbar and footer
 function loadParts(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   let fullPath = path.join(__dirname, req.path);
   res.sendFile(fullPath);
 }
 
 // load page contents
 function loadContent(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   let pageloc = req.path;    
   let fullPath = path.join(__dirname, maindir, infodir, pageloc + ".html");
   console.log("Redirecting to: ", fullPath );
@@ -61,7 +62,7 @@ function loadContent(req, res) {
 
 // database get content
 function loadGetDB(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   let q = url.parse(req.url, true);
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
@@ -90,7 +91,7 @@ function loadGetDB(req, res) {
 
 // database post content
 function loadPostDB(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
   // reject request if table is not present or can't be identified
