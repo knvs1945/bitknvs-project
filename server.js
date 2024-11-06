@@ -181,27 +181,26 @@ function dbSendResult(res, id, contentType, result) {
 }
 
 // GET routes
-app.get('/index', loadIndex);
+app.get('*/index', loadIndex);
 app.get('/', loadIndex);
 app.get('', loadIndex);
 
-app.get('/pages/parts*', loadParts);
-app.get('/pages/parts*', loadParts);
-app.get('/images/*', loadParts);
-app.get('/pages/data/*', loadParts);
+app.get('*/pages/parts/*', loadParts);
+app.get('*/images/*', loadParts);
+app.get('*/pages/data/*', loadParts);
 
-app.get('/about', loadContent);
-app.get('/resume', loadContent);
-app.get('/projects', loadContent);
-app.get('/downloads', loadContent);
+app.get('*/about', loadContent);
+app.get('*/resume', loadContent);
+app.get('*/projects', loadContent);
+app.get('*/downloads', loadContent);
 
-app.get('/sbreadhs*', loadGetDB);
+app.get('*/sbreadhs*', loadGetDB);
 
 // POST routes
-app.post('/index', loadIndex);
-app.post('/', loadIndex);
+app.post('*/index', loadIndex);
+app.post('*/', loadIndex);
 
-app.post('/sbupdatehs/*', loadPostDB);
+app.post('*/sbupdatehs/*', loadPostDB);
 
 // OPTION routes
 app.options('/', (req, res)=> {
