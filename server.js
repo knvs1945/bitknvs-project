@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 // route functions
 function setupCORS(req, res) {
-  if (process.env.PORT && req.headers['x-forwarded-proto'] === 'http') {
+  if (process.env.PORT && req.headers && req.headers['x-forwarded-proto'] === 'http') {
     res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
     res.end();
     return true;
