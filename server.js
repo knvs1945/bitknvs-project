@@ -6,6 +6,10 @@ const path = require('path');
 // API modules for the games
 const SBAPI_readHS = require("./pages/data/spykeball/hspgs");
 
+// custom modules e.g. route loader
+const loader = require('./modules/loader');
+
+
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
 const urlLogging = true;
@@ -26,45 +30,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// route functions
-function setupCORS(req, res) {
-  if (process.env.PORT && req.headers['x-forwarded-proto'] === 'http') {
-    res.writeHead(301, { 'Location': 'https://' + req.headers.host + req.url });
-    res.end();
-    return true;
-  }
-  else return false;
-}
-
-function loadIndex(req, res) {
-  if (setupCORS()) return;
-  let fullPath = path.join(__dirname, maindir, indexpage + ".html");
-  console.log('loading index: ' +  fullPath);
-  res.sendFile(fullPath);
-}
-
-// load page parts like navbar and footer
-function loadParts(req, res) {
-  if (setupCORS()) return;
-  let fullPath = path.join(__dirname, req.path);
-  res.sendFile(fullPath);
-}
-
-// load page contents
-function loadContent(req, res) {
-  if (setupCORS()) return;
-  let pageloc = req.path;    
-  let fullPath = path.join(__dirname, maindir, infodir, pageloc + ".html");
-  console.log("Redirecting to: ", fullPath );
-  res.sendFile(fullPath);
-}
-
 // database get content
 function loadGetDB(req, res) {
   if (setupCORS()) return;
-  let q = url.parse(req.url, true);
-  let urlPath = req.path;
-  let urlParts = urlPath.split('/');
+  const q = url.parse(req.url, true);
+  const urlPath = req.path;
+  const urlParts = urlPath.split('/');
   let queryParts = { gameMode: null, column: null, order: null, page: null, limit: null };
   queryParts.gameMode = q.query.mode;
   queryParts.column = q.query.sort;
@@ -86,7 +57,6 @@ function loadGetDB(req, res) {
   else dbGetSpykeballData(req, res, queryParts);
   
 }
-
 
 // database post content
 function loadPostDB(req, res) {
@@ -181,25 +151,25 @@ function dbSendResult(res, id, contentType, result) {
 }
 
 // GET routes
-app.get('/index', loadIndex);
-app.get('/', loadIndex);
-app.get('', loadIndex);
+app.get('/index', loader.index);
+app.get('/', loader.index);
+app.get('', loader.index);
 
-app.get('/pages/parts*', loadParts);
-app.get('/pages/parts*', loadParts);
-app.get('/images/*', loadParts);
-app.get('/pages/data/*', loadParts);
+app.get('/pages/parts*', loader.parts);
+app.get('/pages/parts*', loader.parts);
+app.get('/images/*', loader.parts);
+app.get('/pages/data/*', loader.parts);
 
-app.get('/about', loadContent);
-app.get('/resume', loadContent);
-app.get('/projects', loadContent);
-app.get('/downloads', loadContent);
+app.get('/about', loader.content);
+app.get('/resume', loader.content);
+app.get('/projects', loader.content);
+app.get('/downloads', loader.content);
 
 app.get('/sbreadhs*', loadGetDB);
 
 // POST routes
-app.post('/index', loadIndex);
-app.post('/', loadIndex);
+app.post('/index', loader.index);
+app.post('/', loader.index);
 
 app.post('/sbupdatehs/*', loadPostDB);
 
