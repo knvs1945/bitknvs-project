@@ -27,14 +27,14 @@ function setupCORS(req, res) {
 
 // load the main page
 function index(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   const fullPath = path.join(curpath, maindir, indexpage + ".html");
   res.sendFile(fullPath);
 }
 
 // load page contents
 function content(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   const pageloc = req.path;    
   let fullPath = path.join(curpath, maindir, infodir, pageloc + ".html");
   res.sendFile(fullPath);
@@ -42,13 +42,13 @@ function content(req, res) {
 
 // load page parts like navbar and footer
 function parts(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   const fullPath = path.join(curpath, req.path);
   res.sendFile(fullPath);
 }
 
 async function tools(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
 
   // const q = url.parse(req.url, true);
   const urlPath = req.path;
