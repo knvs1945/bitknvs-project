@@ -1,0 +1,7 @@
+# .gitignore
+spykeball.sqlite3
+targets/*
+sources/*
+results/*
+externs/*
+logs/*
