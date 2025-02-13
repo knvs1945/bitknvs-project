@@ -9,7 +9,6 @@ const SBAPI_readHS = require("./pages/data/spykeball/hspgs");
 // custom modules e.g. route loader
 const loader = require('./modules/loader');
 
-
 // const port = 8080;
 const port = process.env.PORT || 5000; // heroku ports
 const urlLogging = true;
@@ -19,6 +18,7 @@ const maindir = "./pages";
 const partsdir = "/parts";
 const infodir = "/info";
 const indexpage = "/index";
+const toolscript = "/tools";
 
 // app server setup - static pages
 const app = new express();
@@ -164,6 +164,8 @@ app.get('/about', loader.content);
 app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
+
+app.get('/tools/*', loader.tools);
 
 app.get('/sbreadhs*', loadGetDB);
 

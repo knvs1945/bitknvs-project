@@ -7,6 +7,10 @@ const maindir = "./pages";
 const partsdir = "/parts";
 const infodir = "/info";
 const indexpage = "/index";
+const toolsdir = "/tools";
+
+// custom paths e.g. tools folder
+const toolkit = require('./toolkit.js');
 
 // the loader file is inside a modules folder. Change this folder name if any updates or relocations are made
 const curpath = __dirname.replace("modules","");
@@ -43,8 +47,28 @@ function parts(req, res) {
   res.sendFile(fullPath);
 }
 
+async function tools(req, res) {
+  if (setupCORS()) return;
+
+  // const q = url.parse(req.url, true);
+  const urlPath = req.path;
+  const urlParts = urlPath.split('/');
+  const toolName = urlParts[urlParts.length - 1];
+  if (toolName) {
+    if(toolkit.findTool(toolName)) {
+      const result = await toolkit.use(toolName);
+      res.send(result);
+    }
+    else res.send("Error: Tool " + toolName + " not found");
+  }
+  else {
+    res.send("Error: Tool not found");
+  }
+}
+
 module.exports = {
   index,
   content,
-  parts
+  parts,
+  tools
 }
