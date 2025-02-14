@@ -43,7 +43,7 @@ function content(req, res) {
 
 // load page contents for threejs
 function content3(req, res) {
-  if (setupCORS()) return;
+  if (setupCORS(req, res)) return;
   const pageloc = req.path;
   let fullPath = path.join(curpath, maindir, threedir, pageloc + ".html");
   res.sendFile(fullPath);
