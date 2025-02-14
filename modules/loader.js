@@ -8,6 +8,7 @@ const partsdir = "/parts";
 const infodir = "/info";
 const indexpage = "/index";
 const toolsdir = "/tools";
+const threedir = "/three";
 
 // custom paths e.g. tools folder
 const toolkit = require('./toolkit.js');
@@ -40,6 +41,14 @@ function content(req, res) {
   res.sendFile(fullPath);
 }
 
+// load page contents for threejs
+function content3(req, res) {
+  if (setupCORS()) return;
+  const pageloc = req.path;
+  let fullPath = path.join(curpath, maindir, threedir, pageloc + ".html");
+  res.sendFile(fullPath);
+}
+
 // load page parts like navbar and footer
 function parts(req, res) {
   if (setupCORS()) return;
@@ -69,6 +78,7 @@ async function tools(req, res) {
 module.exports = {
   index,
   content,
+  content3,
   parts,
   tools
 }
