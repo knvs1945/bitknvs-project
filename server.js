@@ -165,6 +165,8 @@ app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
 
+app.get('/widgetspinner', loader.content3);
+
 app.get('/tools/*', loader.tools);
 
 app.get('*/sbreadhs*', loadGetDB);
