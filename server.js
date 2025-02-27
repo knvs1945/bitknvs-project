@@ -31,8 +31,9 @@ app.use((req, res, next) => {
 });
 
 // database get content
+// query format: http://localhost:5000/sbreadhs?mode=ul
 function loadGetDB(req, res) {
-  if (setupCORS()) return;
+  // if (setupCORS()) return;
   const q = url.parse(req.url, true);
   const urlPath = req.path;
   const urlParts = urlPath.split('/');
@@ -152,6 +153,7 @@ function dbSendResult(res, id, contentType, result) {
 
 // GET routes
 app.get('/index', loader.index);
+app.get('/index3', loader.index);
 app.get('/', loader.index);
 app.get('', loader.index);
 
@@ -168,7 +170,6 @@ app.get('/downloads', loader.content);
 app.get('/widgetspinner', loader.content3);
 
 app.get('/tools/*', loader.tools);
-
 app.get('/sbreadhs*', loadGetDB);
 
 // POST routes

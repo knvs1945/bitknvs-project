@@ -7,6 +7,7 @@ const maindir = "./pages";
 const partsdir = "/parts";
 const infodir = "/info";
 const indexpage = "/index";
+const indexThree = "/index3";
 const toolsdir = "/tools";
 const threedir = "/three";
 
@@ -29,7 +30,9 @@ function setupCORS(req, res) {
 // load the main page
 function index(req, res) {
   if (setupCORS()) return;
-  const fullPath = path.join(curpath, maindir, indexpage + ".html");
+  const pageloc = req.path;
+  let fullPath = path.join(curpath, maindir, indexpage + ".html");
+  if (pageloc === "/index3") fullPath = path.join(curpath, maindir, indexThree + ".html");
   res.sendFile(fullPath);
 }
 
