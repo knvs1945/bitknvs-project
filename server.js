@@ -161,12 +161,16 @@ app.get('/pages/parts*', loader.parts);
 app.get('/pages/parts*', loader.parts);
 app.get('/images/*', loader.parts);
 app.get('/pages/data/*', loader.parts);
+app.get('/assets/scripts/*', loader.parts);
+app.get('/assets/css/*', loader.parts);
+app.get('/CSS/*', loader.parts);
 
 app.get('/about', loader.content);
 app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
 
+// threejs routes
 app.get('/widgetspinner', loader.content3);
 
 app.get('/tools/*', loader.tools);

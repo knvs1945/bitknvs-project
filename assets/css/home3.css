@@ -1,0 +1,95 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.webgl {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  outline: none;
+  overflow: hidden;
+}
+
+#footer {
+  top: 98.5% !important;
+}
+
+#canvasarea {
+  overflow: hidden;
+}
+
+/* fonts */
+@font-face {
+  font-family: 'nihonium';
+  src: local('assets/fonts/Nihonium113.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.movingPanel {
+  /*
+  background-color: #6bcc3e;
+  border-radius: 10px;
+  border-color: #000000;
+  */
+  background: transparent;
+  color: #011601;
+  border-style: double;
+  border-color: #6bcc3e;
+  border-width: 0.2%;
+  
+  font-family: 'nihonium113-regular';
+}
+#home, #resume, #about, #downloads {
+  position: absolute;
+  opacity: 0;
+  transform: translate(100%, 0%);
+  display: none;
+}
+
+#projects {
+  position: absolute;
+  opacity: 0;
+  transform: translate(0%, 0%);
+  display: none;
+}
+
+/* Orientation settings */
+@media screen and (orientation: landscape) {
+  #home, #resume, #about, #downloads {
+    /*width: 42.5%;*/
+    width: 800px;
+    height: 90%;
+    right: 25%;
+    margin: 2% auto;
+  }
+  #projects {
+    width: 1024px;
+    height: 75%;
+    right: -31%;
+    margin: 2% auto 0;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  #home, #resume, #about, #downloads {
+    width: 80%;
+    height: 640px;
+    right: 10%;
+    top: 0%;
+    margin: 3% auto;
+  }
+  #projects {
+    width: 80%;
+    height: 640px;
+    top: 0%;
+    right: -72%;
+    margin: 3% auto 0;
+  }
+}
