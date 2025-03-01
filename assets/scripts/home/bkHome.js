@@ -21,11 +21,24 @@ function homepageObj() {
   // start the page elements
   // Part loader for homepage
   this.loadPageElements = function() {
+
     $(() => { $("#about").load("./pages/parts/about3.html"); });
     $(() => { $("#resume").load("./pages/parts/resume3.html"); });
     $(() => { $("#projects").load("./pages/parts/projects3.html"); });
     $(() => { $("#downloads").load("./pages/parts/downloads3.html"); });
-    // $(() => { $("#footer").load("./pages/parts/footer.html"); });
+    $(() => { $("#footer").load("./pages/parts/footer.html"); });
+
+    gsap.to("#footer", { 
+      opacity: 0,
+      duration: 0,
+      onComplete: () => {
+        gsap.to("#footer", { 
+          opacity: 0.5,
+          duration: 3 
+        });
+      }
+    });
+
   }
 
   this.showPanel = function(panel) {
@@ -65,5 +78,19 @@ function homepageObj() {
     });
   }
 }
+
 bkObj = new homepageObj();
-bkObj.loadPageElements();
+
+
+// disable the context menu for the canvas object
+const timer = setInterval( ()=> {
+    const canvas = document.getElementById('canvasarea')
+    if (canvas) {
+      canvas.addEventListener('contextmenu',
+        (event) => { event.preventDefault(); }
+      );
+      clearInterval(timer);
+      console.log(timer);
+    }
+  }, 100
+);
