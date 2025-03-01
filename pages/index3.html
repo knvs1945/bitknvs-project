@@ -17,71 +17,18 @@
     <script type="module" crossorigin src="/three/bitknvshome.js"></script>
   </head>
   <body class="bg-dark overflow-x-hidden">
-    <!--script>
-      $(() => { $("#navbar").load("./pages/parts/navbar.html"); });
-      $(() => { $("#footer").load("./pages/parts/footer.html"); });
-    </script-->
+    <script>
+    </script>
     <div id="navbar" class=""></div>
     <div id="canvasarea">
       <canvas class="webgl z-n1"></canvas>
     </div>
 
-    <!-- DIVS to move / not move -->
-     <div id="about" class="movingPanel container p-2"> 
-      <div class="h-100 overflow-y-auto overflow-x-hidden p-3 m-auto bg-success bg-gradient">
-        <div id="carouselExample" class="carousel slide w-80 row " style="min-width: 200px; max-width: 30px background-color: gray;">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img src="../images/about/self1.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="../images/about/self2.jpg" class="d-block w-100" alt="...">
-            </div>
-            <div class="carousel-item">
-              <img src="../images/about/self3.jpg" class="d-block w-100" alt="...">
-            </div>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
-
-        <div class="w-100 border-0" >
-          <div class="card-body p-2 d-flex flex-column flex-column mb-2">
-          <div class="px-3 py-1 d-flex flex-column mb-2 row">
-            <div class="mb-2"><h2 class="card-title">Kevin Joseff Cabrera</h2></div>
-            <div class="mb-2">
-              <p class="card-subtitle mb-3 text-body-secondary">
-              33-ish Developer & Artist <br/>
-              Cebu, Philippines
-              </p>
-            </div>
-            <div class="mb-2">
-              <p class="card-text">Primarily known as that guy called "Kevin". 
-              He is an avid enthusiast of software and video game development. He enjoys building plastic model kits like gunpla, and binge watching anime series from time to time.
-              He also loves the occasional travel when he isn't feeling poor and the budget & time allows for it. You can summon him by simply yelling "Nine-Nine!" with passion.
-              </br>
-              </p>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-     </div>
-     <div id="resume" class="movingPanel"> 
-      
-     </div>
-     <div id="projects" class="movingPanel"> 
-      
-     </div>
-     <div id="downloads" class="movingPanel"> 
-      
-     </div>
+    <!-- DIVS to animate -->
+     <div id="about" class="movingPanel container p-2"></div>
+     <div id="resume" class="movingPanel container p-2"></div>
+     <div id="projects" class="movingPanel container p-2"></div>
+     <div id="downloads" class="movingPanel container p-2"></div>
 
 
     <div id="footer" class="text-bg-black mb-0 position-absolute start-50 translate-middle"></div>

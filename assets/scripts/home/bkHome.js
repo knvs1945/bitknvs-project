@@ -5,6 +5,7 @@ const links = {
   bitknvs: "https://bitknvs-30e00398cef5.herokuapp.com/",
   itch: "https://bitknvs.itch.io/"
 }
+
 function openLink(link) {
   window.open(link, "_blank");
 }
@@ -16,6 +17,16 @@ function homepageObj() {
   const transitionDuration = 0.75;
   const hideRightPos = 0;
   const showRightPos = -101;
+
+  // start the page elements
+  // Part loader for homepage
+  this.loadPageElements = function() {
+    $(() => { $("#about").load("./pages/parts/about3.html"); });
+    $(() => { $("#resume").load("./pages/parts/resume3.html"); });
+    $(() => { $("#projects").load("./pages/parts/projects3.html"); });
+    $(() => { $("#downloads").load("./pages/parts/downloads3.html"); });
+    // $(() => { $("#footer").load("./pages/parts/footer.html"); });
+  }
 
   this.showPanel = function(panel) {
     if (activePanel != null) this.hideActivePanel(panel);
@@ -55,3 +66,4 @@ function homepageObj() {
   }
 }
 bkObj = new homepageObj();
+bkObj.loadPageElements();
