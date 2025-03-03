@@ -100,7 +100,7 @@ div::-webkit-scrollbar-track {
   display: none;
 }
 
-.card-body, .accordion-collapse {
+.card, .card-body, .accordion-collapse {
   background-color: rgb(165, 226, 136);
 }
 
