@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 // database get content
 // query format: http://localhost:5000/sbreadhs?mode=ul
 function loadGetDB(req, res) {
-  // if (setupCORS()) return;
+  if (loader.setupCORS(req, res)) return;
   const q = url.parse(req.url, true);
   const urlPath = req.path;
   const urlParts = urlPath.split('/');
@@ -61,7 +61,7 @@ function loadGetDB(req, res) {
 
 // database post content
 function loadPostDB(req, res) {
-  if (setupCORS()) return;
+  if (loader.setupCORS(req, res)) return;
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
   // reject request if table is not present or can't be identified
@@ -148,14 +148,13 @@ function dbSendResult(res, id, contentType, result) {
   });
   res.write(result);
   res.end();
-  
 }
 
 // GET routes
-app.get('/index', loader.index);
-app.get('/index3', loader.index);
-app.get('/', loader.index);
 app.get('', loader.index);
+app.get('/', loader.index);
+app.get('/index', loader.index);
+app.get('/indexlegacy', loader.index);
 
 app.get('/pages/parts*', loader.parts);
 app.get('/pages/parts*', loader.parts);
@@ -193,8 +192,6 @@ app.options('/', (req, res)=> {
   });
   return res.end();
 })
-
-
 
 // routes
 app.listen(port, () => {

@@ -86,7 +86,6 @@ div::-webkit-scrollbar-track {
   scrollbar-color: transparent;
 }
 
-
 #home, #resume, #about, #downloads {
   position: absolute;
   opacity: 0;
@@ -99,6 +98,18 @@ div::-webkit-scrollbar-track {
   opacity: 0;
   transform: translate(0%, 0%);
   display: none;
+}
+
+.card-body, .accordion-collapse {
+  background-color: rgb(165, 226, 136);
+}
+
+.accordion {
+  --bs-accordion-border-color: rgb(21, 44, 10);
+  --bs-accordion-active-color: rgb(245, 255, 241);
+  --bs-accordion-active-bg: rgb(21, 44, 10);
+  --bs-accordion-btn-color: rgb(21, 44, 10);
+  --bs-accordion-bg: rgb(230, 252, 212);
 }
 
 /* Orientation settings */

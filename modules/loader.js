@@ -32,7 +32,7 @@ function index(req, res) {
   if (setupCORS()) return;
   const pageloc = req.path;
   let fullPath = path.join(curpath, maindir, indexpage + ".html");
-  if (pageloc === "/index3") fullPath = path.join(curpath, maindir, indexThree + ".html");
+  if (pageloc === "/indexlegacy") fullPath = path.join(curpath, maindir, "indexlegacy.html");
   res.sendFile(fullPath);
 }
 
