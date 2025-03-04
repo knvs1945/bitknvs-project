@@ -15,8 +15,8 @@ function homepageObj() {
   
   let activePanel = null;
   const transitionDuration = 0.75;
-  const hideRightPos = 0;
-  const showRightPos = -101;
+  const hideRightPos = 100;
+  const showRightPos = 0;
 
   // start the page elements
   // Part loader for homepage
@@ -48,9 +48,11 @@ function homepageObj() {
   
   this.hideActivePanel = function(targetPanel) {
     if (activePanel === null) return;
-    gsap.to(activePanel, { 
-      xPercent: hideRightPos,
-      yPercent: 0,
+
+    const divName = activePanel.replace("#","");
+    const tempDiv = document.getElementById(divName);
+    
+    gsap.to(activePanel, {
       opacity: 0,
       duration: transitionDuration,
       ease: "power1.in",
@@ -63,9 +65,11 @@ function homepageObj() {
   }
 
   this.animatePanel = function(targetPanel) {
+    
+    const divName = targetPanel.replace("#","");
+    const tempDiv = document.getElementById(divName);
+
     gsap.to( targetPanel, {
-      xPercent: showRightPos,
-      yPercent: 0,
       opacity: 0.9,
       duration: transitionDuration,
       ease: "power1.out",
@@ -90,7 +94,6 @@ const timer = setInterval( ()=> {
         (event) => { event.preventDefault(); }
       );
       clearInterval(timer);
-      console.log(timer);
     }
   }, 100
 );
