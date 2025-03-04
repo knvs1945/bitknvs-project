@@ -41,6 +41,63 @@ function homepageObj() {
 
   }
 
+  // For creating flashing divs on display or hide
+  function createFlashDiv(targetDiv) {
+    const newDiv = document.createElement("div");
+    const computedStyle = window.getComputedStyle(targetDiv);
+    for (let property of computedStyle) {
+      // only get specific properties of the targetDiv:
+      if (
+          property === "width"     || 
+          property === "height"    || 
+          property === "position"  ||
+          property === "transform" ||
+          property === "left"      ||
+          property === "top"
+        ) newDiv.style[property] = computedStyle.getPropertyValue(property);
+    }
+    
+    newDiv.style.backgroundColor = "transparent";
+    newDiv.id = "flashDiv";
+    newDiv.classList.add("gridflash-container");
+    document.body.appendChild(newDiv);
+    return newDiv;
+  }
+
+  // For creating flashing divs with the flash div
+  function createFlashGrid(flashDiv, boxRows = 5) {
+
+    const computedStyle = window.getComputedStyle(flashDiv);
+
+    let boxHeight = computedStyle.getPropertyValue("height");
+    boxHeight = boxHeight.replace("px","");
+    boxHeight = Number(boxHeight);
+    let boxWidth = computedStyle.getPropertyValue("width");
+    boxWidth = boxWidth.replace("px","");
+    boxWidth = Number(boxWidth);
+
+    const boxSide = boxHeight / boxRows;
+    const boxColumns = Math.floor(boxWidth / boxSide) + 1;
+    const boxCount = boxRows * boxColumns; // number of boxes to create;
+    const boxGrid = [];
+
+    // adjust the grid-template-rows and columns setting of the flashdiv
+    flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${boxSide}px`;
+    flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide}px`;
+
+    for (let i = 0; i < boxCount; i++) {
+      const newBox = document.createElement("div");
+      newBox.style.width = boxSide + "px";
+      newBox.style.height = boxSide + "px";
+      newBox.classList.add("gridflash-part");
+      newBox.style.backgroundColor = "white";
+      flashDiv.appendChild(newBox);
+      boxGrid.push(newBox);
+    }
+
+    return boxGrid;
+  }
+
   this.showPanel = function(panel) {
     if (activePanel != null) this.hideActivePanel(panel);
     else this.animatePanel(panel);
@@ -48,20 +105,63 @@ function homepageObj() {
   
   this.hideActivePanel = function(targetPanel) {
     if (activePanel === null) return;
-
     const divName = activePanel.replace("#","");
     const tempDiv = document.getElementById(divName);
     
-    gsap.to(activePanel, {
-      opacity: 0,
-      duration: transitionDuration,
-      ease: "power1.in",
-      onComplete: () => {
-        gsap.to(activePanel, { display: "none", duration: 0 });
-        if (targetPanel !== "home") this.animatePanel(targetPanel);
-        else activePanel = null;
+    if (tempDiv) {
+      const flashDiv = createFlashDiv(tempDiv);
+      const tempGrid = createFlashGrid(flashDiv);
+
+      // shuffle the current grid by swapping the items at indices i and j using destructuring []
+      for (let i = tempGrid.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tempGrid[i], tempGrid[j]] = [tempGrid[j], tempGrid[i]];
       }
-    });
+
+      let startGsap = null, prevGsap = null;
+      for (let i = 0; i < tempGrid.length; i++) {
+        const box = tempGrid[i];
+        const currentGsap = gsap.to(box, {
+          opacity: 0,
+          duration: 0.05,
+          paused: true
+        })
+
+        if (!startGsap) startGsap = currentGsap;
+        if (prevGsap) {
+          prevGsap.vars.onComplete = () => {
+            currentGsap.play();
+          }
+        }
+        prevGsap = currentGsap;
+      }
+      
+      tempDiv.style.opacity = 0;
+      const flashGsap = gsap.to(flashDiv, {
+        opacity: 0,
+        duration: transitionDuration,
+        ease: "power1.in",
+        paused: true,
+        onComplete: () => {
+          gsap.to(activePanel, { display: "none", duration: 0 });
+          if (targetPanel !== "home") this.animatePanel(targetPanel);
+          else activePanel = null;
+          // document.body.removeChild(flashDiv);
+        }
+      });
+      prevGsap.vars.onComplete = () => {
+        // flashDiv.style.backgroundColor = "white";
+        flashGsap.play();
+      }
+
+      // start the outro animation
+      startGsap.play();
+    }
+    else {
+      if (targetPanel !== "home") this.animatePanel(targetPanel);
+      else activePanel = null;
+    }
+    
   }
 
   this.animatePanel = function(targetPanel) {

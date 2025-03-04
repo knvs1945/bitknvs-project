@@ -118,3 +118,15 @@ div::-webkit-scrollbar-track {
     margin: -20% auto;
   }
 }
+
+/* Grid Item for div intros or outros*/
+.gridflash-container {
+  display: grid;
+  flex-wrap: wrap;
+  gap: 0px;
+  justify-items: center;
+}
+
+.gridflash-part {
+  background-color: rgb(255, 0, 0);
+}
