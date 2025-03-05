@@ -65,27 +65,30 @@ function homepageObj() {
   }
 
   // For creating flashing divs with the flash div
-  function createFlashGrid(flashDiv, boxRows = 8) {
+  function createFlashGrid(flashDiv, gridCount = 50) {
 
     const computedStyle = window.getComputedStyle(flashDiv);
-
-    let boxHeight = computedStyle.getPropertyValue("height");
-    boxHeight = boxHeight.replace("px","");
-    boxHeight = Number(boxHeight);
-    let boxWidth = computedStyle.getPropertyValue("width");
-    boxWidth = boxWidth.replace("px","");
-    boxWidth = Number(boxWidth);
-
-    const boxSide = boxHeight / boxRows;
-    const boxColumns = Math.ceil(boxWidth / boxSide);
-    const boxCount = boxRows * boxColumns; // number of boxes to create;
+    
+    let gridHeight = computedStyle.getPropertyValue("height");
+    let gridWidth = computedStyle.getPropertyValue("width");
+    gridHeight = gridHeight.replace("px","");
+    gridHeight = Number(gridHeight);
+    gridWidth = gridWidth.replace("px","");
+    gridWidth = Number(gridWidth);
+    
+    const gridArea = gridWidth * gridHeight;
+    const boxArea = gridArea / gridCount;
+    const boxSide = Math.sqrt(boxArea);
+    const boxRows = Math.ceil(gridHeight / boxSide);
+    const boxColumns = Math.ceil(gridWidth / boxSide);
+    gridCount = boxRows * boxColumns;
     const boxGrid = [];
 
     // adjust the grid-template-rows and columns setting of the flashdiv
     flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${boxSide}px`;
     flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide}px`;
 
-    for (let i = 0; i < boxCount; i++) {
+    for (let i = 0; i < gridCount; i++) {
       const newBox = document.createElement("div");
       newBox.style.width = boxSide + "px";
       newBox.style.height = boxSide + "px";
