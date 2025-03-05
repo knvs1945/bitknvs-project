@@ -12,11 +12,8 @@ function openLink(link) {
 
 // homepage class
 function homepageObj() {
-  
   let activePanel = null;
-  const transitionDuration = 0.75;
-  const hideRightPos = 100;
-  const showRightPos = 0;
+  const transitionDuration = 0.5;
 
   // start the page elements
   // Part loader for homepage
@@ -44,6 +41,8 @@ function homepageObj() {
   // For creating flashing divs on display or hide
   function createFlashDiv(targetDiv) {
     const newDiv = document.createElement("div");
+
+    // temporarily display the targetDiv to accurately calculate its positioning
     const computedStyle = window.getComputedStyle(targetDiv);
     for (let property of computedStyle) {
       // only get specific properties of the targetDiv:
@@ -53,7 +52,8 @@ function homepageObj() {
           property === "position"  ||
           property === "transform" ||
           property === "left"      ||
-          property === "top"
+          property === "top"       ||
+          property === "margin-top" 
         ) newDiv.style[property] = computedStyle.getPropertyValue(property);
     }
     
@@ -65,7 +65,7 @@ function homepageObj() {
   }
 
   // For creating flashing divs with the flash div
-  function createFlashGrid(flashDiv, boxRows = 5) {
+  function createFlashGrid(flashDiv, boxRows = 8) {
 
     const computedStyle = window.getComputedStyle(flashDiv);
 
@@ -77,7 +77,7 @@ function homepageObj() {
     boxWidth = Number(boxWidth);
 
     const boxSide = boxHeight / boxRows;
-    const boxColumns = Math.floor(boxWidth / boxSide) + 1;
+    const boxColumns = Math.ceil(boxWidth / boxSide);
     const boxCount = boxRows * boxColumns; // number of boxes to create;
     const boxGrid = [];
 
@@ -109,7 +109,32 @@ function homepageObj() {
     const tempDiv = document.getElementById(divName);
     
     if (tempDiv) {
+      gsap.to(tempDiv, {
+        opacity: 0,
+        duration: transitionDuration,
+        ease: "power1.in",
+        onComplete: () => {
+          gsap.to(activePanel, { display: "none", duration: 0 });
+          if (targetPanel !== "home") this.animatePanel(targetPanel);
+          else activePanel = null;
+        }
+      });
+    }
+    else {
+      if (targetPanel !== "home") this.animatePanel(targetPanel);
+      else activePanel = null;
+    }
+    
+  }
+
+  // animate the intro of a panel
+  this.animatePanel = function(targetPanel) {
+    const divName = targetPanel.replace("#","");
+    const tempDiv = document.getElementById(divName);
+
+    if (tempDiv) {
       const flashDiv = createFlashDiv(tempDiv);
+      flashDiv.classList.add("translate-middle");
       const tempGrid = createFlashGrid(flashDiv);
 
       // shuffle the current grid by swapping the items at indices i and j using destructuring []
@@ -118,12 +143,14 @@ function homepageObj() {
         [tempGrid[i], tempGrid[j]] = [tempGrid[j], tempGrid[i]];
       }
 
+      // assign separate gsap actions per box and chain them
       let startGsap = null, prevGsap = null;
       for (let i = 0; i < tempGrid.length; i++) {
         const box = tempGrid[i];
+        box.style.opacity = 0;
         const currentGsap = gsap.to(box, {
-          opacity: 0,
-          duration: 0.05,
+          opacity: 1,
+          duration: 0.01,
           paused: true
         })
 
@@ -135,51 +162,30 @@ function homepageObj() {
         }
         prevGsap = currentGsap;
       }
-      
+
       tempDiv.style.opacity = 0;
       const flashGsap = gsap.to(flashDiv, {
         opacity: 0,
         duration: transitionDuration,
-        ease: "power1.in",
+        ease: "power1.out",
         paused: true,
+        onStart: () => {
+          gsap.to(targetPanel, { display: "block", opacity: 1, duration: 0 });
+        },
         onComplete: () => {
-          gsap.to(activePanel, { display: "none", duration: 0 });
-          if (targetPanel !== "home") this.animatePanel(targetPanel);
-          else activePanel = null;
-          // document.body.removeChild(flashDiv);
+          activePanel = targetPanel;
+          document.body.removeChild(flashDiv);
         }
       });
       prevGsap.vars.onComplete = () => {
-        // flashDiv.style.backgroundColor = "white";
+        flashDiv.style.backgroundColor = "white";
+        flashDiv.style.opacity = 1;
         flashGsap.play();
       }
 
-      // start the outro animation
+      // start the intro animation
       startGsap.play();
     }
-    else {
-      if (targetPanel !== "home") this.animatePanel(targetPanel);
-      else activePanel = null;
-    }
-    
-  }
-
-  this.animatePanel = function(targetPanel) {
-    
-    const divName = targetPanel.replace("#","");
-    const tempDiv = document.getElementById(divName);
-
-    gsap.to( targetPanel, {
-      opacity: 0.9,
-      duration: transitionDuration,
-      ease: "power1.out",
-      onStart: () => {
-        gsap.to(targetPanel, { display: "block", duration: 0 });
-      },
-      onComplete: () => {
-        activePanel = targetPanel;
-      }
-    });
   }
 }
 
