@@ -31,8 +31,9 @@ app.use((req, res, next) => {
 });
 
 // database get content
+// query format: http://localhost:5000/sbreadhs?mode=ul
 function loadGetDB(req, res) {
-  if (setupCORS()) return;
+  if (loader.setupCORS(req, res)) return;
   const q = url.parse(req.url, true);
   const urlPath = req.path;
   const urlParts = urlPath.split('/');
@@ -60,7 +61,11 @@ function loadGetDB(req, res) {
 
 // database post content
 function loadPostDB(req, res) {
+<<<<<<< HEAD
   if (setupCORS(req, res)) return;
+=======
+  if (loader.setupCORS(req, res)) return;
+>>>>>>> dev
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
   // reject request if table is not present or can't be identified
@@ -147,29 +152,37 @@ function dbSendResult(res, id, contentType, result) {
   });
   res.write(result);
   res.end();
-  
 }
 
 // GET routes
-app.get('/index', loader.index);
-app.get('/', loader.index);
 app.get('', loader.index);
+app.get('/', loader.index);
+app.get('/index', loader.index);
+app.get('/indexlegacy', loader.index);
 
 app.get('/pages/parts*', loader.parts);
 app.get('/pages/parts*', loader.parts);
 app.get('/images/*', loader.parts);
 app.get('/pages/data/*', loader.parts);
+app.get('/assets/scripts/*', loader.parts);
+app.get('/assets/css/*', loader.parts);
+app.get('/CSS/*', loader.parts);
 
 app.get('/about', loader.content);
 app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
 
+// threejs routes
 app.get('/widgetspinner', loader.content3);
 
 app.get('/tools/*', loader.tools);
+<<<<<<< HEAD
 
 app.get('*/sbreadhs*', loadGetDB);
+=======
+app.get('/sbreadhs*', loadGetDB);
+>>>>>>> dev
 
 // POST routes
 app.post('/index', loader.index);
@@ -188,8 +201,6 @@ app.options('/', (req, res)=> {
   });
   return res.end();
 })
-
-
 
 // routes
 app.listen(port, () => {

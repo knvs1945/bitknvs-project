@@ -1,0 +1,50 @@
+config:
+  # Artillery testing server for testing bitknvs server
+  # Designed for scalability
+  target: http://localhost:5000
+  phases:
+    - duration: 300
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    - duration: 300
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 300
+      arrivalRate: 10
+      rampTo: 20
+      name: Full load
+    # plugins for each virtual user
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      # rating for each result at defined percentages (p99 = 99%)
+      - 'http.response-time.p99': 300
+      - 'http.response-time.p95': 300
+      - 'http.response-time.p75': 100
+      - 'http.response-time.p50': 60
+    conditions:
+      - expression: 'http.response-time.p75 <= 100'
+# APIs visited by each user. Count defines how many times each user does the scenario
+scenarios:
+  - flow:
+    - loop:
+      - get:
+          url: '/sbreadhs?mode=ul'
+          capture:
+            json: '$.length'
+            as: 'result'
+      # - log: 'UL Result length: {{ result }}'
+      - get:
+          url: '/sbreadhs?mode=ta'
+          capture:
+            json: '$.length'
+            as: 'result'
+      # - log: 'TA Result length: {{ result }}'
+      count: 5

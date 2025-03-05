@@ -1,0 +1,52 @@
+config:
+  # Artillery testing server for testing bitknvs server
+  # Designed for scalability
+  target: https://bitknvs-30e00398cef5.herokuapp.com
+  phases:
+    - duration: 120
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 10
+      name: Ramp up load
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 20
+      name: Full load
+    # plugins for each virtual user
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      # rating for each result at defined percentages (p99 = 99%)
+      - 'http.response-time.p99': 1000
+      - 'http.response-time.p95': 1000
+      - 'http.response-time.p75': 700
+      - 'http.response-time.p50': 500
+    conditions:
+      - expression: 'http.response-time.p75 <= 1000'
+# APIs visited by each user. Count defines how many times each user does the scenario
+scenarios:
+  - flow:
+    - loop:
+      - get:
+          url: '/index'
+      - get:
+          url: '/sbreadhs?mode=ul'
+          capture:
+            json: '$.length'
+            as: 'result'
+      - log: 'UL Result length: {{ result }}'
+      - get:
+          url: '/sbreadhs?mode=ta'
+          capture:
+            json: '$.length'
+            as: 'result'
+      - log: 'TA Result length: {{ result }}'
+      count: 5

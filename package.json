@@ -25,5 +25,8 @@
     "nodemon": "^3.1.0",
     "pg": "^8.11.5",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "artillery": "^2.0.21"
   }
 }

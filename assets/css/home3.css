@@ -1,0 +1,132 @@
+/* fonts */
+@font-face {
+  font-family: 'nihonium';
+  src: local('assets/fonts/Nihonium113.ttf') format('ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "kirupaPixel";
+  src: url('/fonts/born2bsportyv2-webfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.accordion-button {
+  font-size: 2rem;
+}
+
+.content-title {
+  font-size: 2.4rem;
+}
+
+.content-text {
+  /*font-size: 1.25rem;*/
+  font-size: 20px;
+  font-weight: 100;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+div::-webkit-scrollbar {
+  width: 5px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: rgb(6, 39, 3);
+  border-radius: 5px;
+  opacity: 0.2;
+}
+
+div::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.webgl {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  outline: none;
+  overflow: hidden;
+}
+
+#footer {
+  top: 98.5% !important;
+}
+
+#canvasarea {
+  overflow: hidden;
+}
+
+.movingPanel {
+  background: transparent;
+  color: #011601;
+  font-family: "Jersey 15", 'nihonium113-regular', 'Helvetica Neue', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, serif;
+  font-weight: 400;
+  font-style: normal;
+  scrollbar-width: thin;
+  scrollbar-color: transparent;
+}
+
+#home, #resume, #about, #downloads, #projects {
+  position: absolute;
+  opacity: 0;
+  display: none;
+}
+
+.card, .card-body, .accordion-collapse {
+  background-color: rgb(165, 226, 136);
+}
+
+.accordion {
+  --bs-accordion-border-color: rgb(21, 44, 10);
+  --bs-accordion-active-color: rgb(245, 255, 241);
+  --bs-accordion-active-bg: rgb(21, 44, 10);
+  --bs-accordion-btn-color: rgb(21, 44, 10);
+  --bs-accordion-bg: rgb(230, 252, 212);
+}
+
+/* Orientation settings */
+@media screen and (orientation: landscape) {
+  #home, #resume, #about, #downloads {
+    width: 720px;
+    height: 90%;
+    
+  }
+  #projects {
+    width: 1024px;
+    height: 75%;
+    margin: -2% auto 0;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  #home, #resume, #about, #downloads, #projects{
+    width: 80%;
+    height: 640px;
+    top: 0%;
+    margin: -20% auto;
+  }
+}
+
+/* Grid Item for div intros or outros*/
+.gridflash-container {
+  display: grid;
+  flex-wrap: wrap;
+  gap: 0px;
+  justify-items: center;
+}
+
+.gridflash-part {
+  background-color: rgb(255, 0, 0);
+}
