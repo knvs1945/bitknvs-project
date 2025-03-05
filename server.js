@@ -61,11 +61,7 @@ function loadGetDB(req, res) {
 
 // database post content
 function loadPostDB(req, res) {
-<<<<<<< HEAD
-  if (setupCORS(req, res)) return;
-=======
   if (loader.setupCORS(req, res)) return;
->>>>>>> dev
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
   // reject request if table is not present or can't be identified
@@ -177,12 +173,7 @@ app.get('/downloads', loader.content);
 app.get('/widgetspinner', loader.content3);
 
 app.get('/tools/*', loader.tools);
-<<<<<<< HEAD
-
-app.get('*/sbreadhs*', loadGetDB);
-=======
 app.get('/sbreadhs*', loadGetDB);
->>>>>>> dev
 
 // POST routes
 app.post('/index', loader.index);
