@@ -59,6 +59,13 @@ function parts(req, res) {
   res.sendFile(fullPath);
 }
 
+// load from public folder like scripts and CSS
+function public(req, res) {
+  if (setupCORS(req, res)) return;
+  const fullPath = path.join(curpath, req.path);
+  res.sendFile(fullPath);
+}
+
 async function tools(req, res) {
   if (setupCORS(req, res)) return;
 
@@ -83,5 +90,6 @@ module.exports = {
   content,
   content3,
   parts,
+  public,
   tools
 }

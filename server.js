@@ -169,6 +169,9 @@ app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
 
+// vercel public routes
+app.get('/public/*', loader.public);
+
 // threejs routes
 app.get('/widgetspinner', loader.content3);
 
