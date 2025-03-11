@@ -89,11 +89,15 @@ function homepageObj() {
     flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide}px`;
 
     for (let i = 0; i < gridCount; i++) {
+      const borderWidth = (Math.random() * 3) + 0.5;
+      const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
+      const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
       const newBox = document.createElement("div");
       newBox.style.width = boxSide + "px";
       newBox.style.height = boxSide + "px";
       newBox.classList.add("gridflash-part");
-      newBox.style.backgroundColor = "white";
+      newBox.style.backgroundColor = "transparent";
+      newBox.style.border = `${borderWidth}px solid rgb(${shade1}, 216, ${shade2})`; // original shade: 158, 216, 131
       flashDiv.appendChild(newBox);
       boxGrid.push(newBox);
     }
