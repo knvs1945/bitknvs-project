@@ -130,3 +130,24 @@ div::-webkit-scrollbar-track {
 .gridflash-part {
   background-color: rgb(255, 0, 0);
 }
+
+.bg_downloads {
+  opacity: 0.5;
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  box-sizing: content-box;
+}
+
+.bg_downloads_img {
+  width: auto;
+  height: 100%;
+  left: 83%;
+  position: relative;
+}
+
+@media screen and (max-width: 850px) {
+  .bg_downloads_img {
+    left: 79%;
+  }
+}
