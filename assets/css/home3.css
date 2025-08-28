@@ -154,8 +154,8 @@ div::-webkit-scrollbar-track {
 
 /* buttons */
 .bt_expand_down {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   right: 0%;
   top: 0%;
   margin: 10px;
@@ -168,6 +168,13 @@ div::-webkit-scrollbar-track {
 
 .bt_expand_down:hover {
   background-image: url("/assets/css/buttons/expand_down_hover.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+
+.bt_expand_down:active {
+  background-image: url("/assets/css/buttons/expand_down_clicked.png");
   background-size: 100%;
   background-repeat: no-repeat;
   background-origin: content-box;
