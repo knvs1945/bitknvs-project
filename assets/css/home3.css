@@ -151,3 +151,24 @@ div::-webkit-scrollbar-track {
     left: 79%;
   }
 }
+
+/* buttons */
+.bt_expand_down {
+  width: 80px;
+  height: 80px;
+  right: 0%;
+  top: 0%;
+  margin: 10px;
+  position: absolute;
+  background-image: url("/assets/css/buttons/expand_down.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
+
+.bt_expand_down:hover {
+  background-image: url("/assets/css/buttons/expand_down_hover.png");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+}
