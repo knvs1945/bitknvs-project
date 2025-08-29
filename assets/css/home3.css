@@ -152,6 +152,11 @@ div::-webkit-scrollbar-track {
   }
 }
 
+/* project tabs expand info */
+.project_tab_hidden {
+  display: none;
+}
+
 /* buttons */
 .bt_expand_down {
   width: 60px;
@@ -179,3 +184,4 @@ div::-webkit-scrollbar-track {
   background-repeat: no-repeat;
   background-origin: content-box;
 }
+
