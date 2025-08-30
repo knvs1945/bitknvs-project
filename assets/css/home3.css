@@ -168,7 +168,20 @@ div::-webkit-scrollbar-track {
   padding: 0 10px 0 0;
   margin: 0 0 10px;
   font-family: "Verdana";
-  font-size: 0.75vw;
+  font-size: 0.9rem;
+}
+
+/* Add media queries for different screen sizes */
+@media screen and (max-width: 768px) {
+  .project_details {
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .project_details {
+    font-size: 0.75rem;
+  }
 }
 
 /* buttons */

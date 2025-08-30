@@ -12,7 +12,7 @@
 	},
 
 	"projects_widget_spinner": {
-		"description": ""
+		"description": "<p>I am simply fascinated by the concept of using 3D graphic elements in Webpages that don't rely on playing videos or GIFs. The idea of seeing such elements incorporated into a webpage that is normally dependent on flat & linear concepts such as divs was a mystifying idea to me back then. Now while looking up real-estate portfolio sites, I stumbled onto ThreeJS, a JavaScript package that makes developing 3D elements more user-friendly, and well it demystified all of that. But beyond demystification, was the curiosity and wonder of thinking if I'd be able to learn that. And, so I did, with Widget Spinner. </p><p>Widget Spinner is a small ThreeJS library I wrote that lets users create interactive menus on their own webpages. While it does require compiling as it is still ultimately a Threejs project, it makes setting up the interactive menu behavior simpler than just writing it yourself. The menu elements are Threejs reliant, so you can design them any way you want, and have its respective action can be connected to a client-side script that will do whatever you need on the page. With Widget Spinner, I'm now able to turn my webpage into a basic smart TV menu of sorts. Don't believe me? Go ahead and check out the demo page for yourself.</p>"
 	},
 
 	"projects_candlesnap": {
@@ -20,6 +20,10 @@
 	},
 
 	"projects_spykeball": {
+		"description": ""
+	},
+
+	"projects_lone_bard": {
 		"description": ""
 	}
 }
