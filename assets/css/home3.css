@@ -157,6 +157,20 @@ div::-webkit-scrollbar-track {
   display: none;
 }
 
+.project_placeholder {
+  min-height: 52vh;
+  height: 100vw;
+  opacity: 0;
+}
+
+.project_details {
+  max-height: 400px;
+  padding: 0 10px 0 0;
+  margin: 0 0 10px;
+  font-family: "Verdana";
+  font-size: 0.75vw;
+}
+
 /* buttons */
 .bt_expand_down {
   width: 60px;
