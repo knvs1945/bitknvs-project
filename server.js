@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 // database get content
 // query format: http://localhost:5000/sbreadhs?mode=ul
 function loadGetDB(req, res) {
-  if (loader.setupCORS(req, res)) return;
+  // if (loader.setupCORS(req, res)) return;
   const q = url.parse(req.url, true);
   const urlPath = req.path;
   const urlParts = urlPath.split('/');
@@ -55,8 +55,7 @@ function loadGetDB(req, res) {
     res.write("Error: No Game Mode Specified");
     res.end();
   }
-  else dbGetSpykeballData(req, res, queryParts);
-  
+  else dbGetSpykeballData(req, res, queryParts); 
 }
 
 // database post content
