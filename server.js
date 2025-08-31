@@ -60,7 +60,7 @@ function loadGetDB(req, res) {
 
 // database post content
 function loadPostDB(req, res) {
-  if (loader.setupCORS(req, res)) return;
+  // if (loader.setupCORS(req, res)) return;
   let urlPath = req.path;
   let urlParts = urlPath.split('/');
   // reject request if table is not present or can't be identified
