@@ -163,6 +163,12 @@ div::-webkit-scrollbar-track {
   opacity: 0;
 }
 
+.project_subject {
+  max-height: 500px;
+  overflow-y: auto;
+  box-sizing: content-box;
+}
+
 .project_details {
   max-height: 400px;
   padding: 0 10px 0 0;
