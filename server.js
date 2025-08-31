@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 // database get content
 // query format: http://localhost:5000/sbreadhs?mode=ul
 function loadGetDB(req, res) {
-  if (loader.setupCORS(req, res)) return;
+  // if (loader.setupCORS(req, res)) return;
   const q = url.parse(req.url, true);
   const urlPath = req.path;
   const urlParts = urlPath.split('/');
