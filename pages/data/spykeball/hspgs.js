@@ -10,12 +10,20 @@ const { Client } = require('pg');
 console.log("Running DB Check for: " + path.join(__dirname, '/spykeball'));
 let client;
 if (process.env.NODE_ENV === 'production') {
+    // Commenting out from Postgres migration to lightsail
+    // client = new Client({
+    //     connectionString: process.env.DATABASE_URL,
+    //     ssl: {
+    //         rejectUnauthorized: false
+    //     }
+    // })
     client = new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: {
-            rejectUnauthorized: false
-        }
-    })
+        host: 'localhost',
+        port: 5432,
+        database: 'spykeball',
+        user: 'bitknvs',
+        password: 'TheDefender45',
+    });
 }
 else {
     client = new Client({
