@@ -225,6 +225,7 @@ div::-webkit-scrollbar-track {
   width: 80%;
   height: 80%;
   box-sizing: content-box;
+  pointer-events: none;
 }
 
 .bg_downloads_img {
