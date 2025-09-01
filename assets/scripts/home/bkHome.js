@@ -28,7 +28,7 @@ function homepageObj() {
     // set the innerText of the homeInstructions to depend on the orientation of the browser
     const vpWidth = window.innerWidth;
     const orientation = window.screen.orientation.type;
-    const instruction = (orientation.includes("landscape") && vpWidth > 500) ? "Use ↑ or ↓ keys or click on an option to select</br> Press Enters or click the selected option to open" : "Use ← or → keys or click on an option to select</br> Press Enters or click the selected option to open";
+    const instruction = (orientation.includes("landscape") && vpWidth > 500) ? "Use ↑ or ↓ keys or click on an option to select</br> Press Enter or click the selected option to open" : "Use ← or → keys or click on an option to select</br> Press Enter or click the selected option to open";
     $("#homeInstructions").html(instruction);
 
     gsap.to("#footer", { 
