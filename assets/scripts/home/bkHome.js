@@ -28,8 +28,9 @@ function homepageObj() {
     // set the innerText of the homeInstructions to depend on the orientation of the browser
     const vpWidth = window.innerWidth;
     const orientation = window.screen.orientation.type;
-    const instruction = (orientation.includes("landscape") && vpWidth > 500) ? "Use ↑ or ↓ keys or click on an option to select</br> Press Enter or click the selected option to open" : "Use ← or → keys or click on an option to select</br> Press Enter or click the selected option to open";
-    $("#homeInstructions").html(instruction);
+    const instruction = (orientation.includes("landscape") && vpWidth > 500) ? "Use ↑ or ↓ keys" : "Use ← or → keys";
+    const fullInstruction = `${instruction} or click on an option to select</br> Press Enter or click the selected option to open`;
+    $("#homeInstructions").html(fullInstruction);
 
     gsap.to("#footer", { 
       opacity: 0,
@@ -90,7 +91,9 @@ function homepageObj() {
     gridHeight = Number(gridHeight);
     gridWidth = gridWidth.replace("px","");
     gridWidth = Number(gridWidth);
-    
+
+    // use this formula for creating a grid based on square boxes 
+    /* 
     const gridArea = gridWidth * gridHeight;
     const boxArea = gridArea / gridCount;
     const boxSide = Math.sqrt(boxArea);
@@ -98,17 +101,38 @@ function homepageObj() {
     const boxColumns = Math.ceil(gridWidth / boxSide);
     gridCount = boxRows * boxColumns;
     const boxGrid = [];
-
-    // adjust the grid-template-rows and columns setting of the flashdiv
     flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${boxSide}px`;
     flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide}px`;
-
     for (let i = 0; i < gridCount; i++) {
       const borderWidth = (Math.random() * 3) + 0.5;
       const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
       const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
       const newBox = document.createElement("div");
       newBox.style.width = boxSide + "px";
+      newBox.style.height = boxSide + "px";
+      newBox.classList.add("gridflash-part");
+      newBox.style.backgroundColor = "transparent";
+      newBox.style.border = `${borderWidth}px solid rgb(${shade1}, 216, ${shade2})`; // original shade: 158, 216, 131
+      flashDiv.appendChild(newBox);
+      boxGrid.push(newBox);
+    } 
+    */
+
+    // use this formula for creating a grid using thin rectangles
+    const boxGrid = [];
+    const boxRows = gridCount;
+    const boxColumns = 1;
+    const boxSide = gridHeight / gridCount;
+    flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${gridWidth})px`;
+    flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide})px`;
+
+    for (let i = 0; i < gridCount; i++) {
+      // const borderWidth = (Math.random() * 3) + 0.5;
+      const borderWidth = 0.3;
+      const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
+      const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
+      const newBox = document.createElement("div");
+      newBox.style.width = gridWidth + "px";
       newBox.style.height = boxSide + "px";
       newBox.classList.add("gridflash-part");
       newBox.style.backgroundColor = "transparent";
@@ -160,11 +184,13 @@ function homepageObj() {
       const tempGrid = createFlashGrid(flashDiv);
 
       // shuffle the current grid by swapping the items at indices i and j using destructuring []
-      for (let i = tempGrid.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tempGrid[i], tempGrid[j]] = [tempGrid[j], tempGrid[i]];
+      function randomizeGrid() {
+        for (let i = tempGrid.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [tempGrid[i], tempGrid[j]] = [tempGrid[j], tempGrid[i]];
+        }
       }
-
+      
       // assign separate gsap actions per box and chain them
       let startGsap = null, prevGsap = null;
       for (let i = 0; i < tempGrid.length; i++) {

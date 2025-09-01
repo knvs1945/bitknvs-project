@@ -60,6 +60,40 @@ div::-webkit-scrollbar-track {
   overflow: hidden;
 }
 
+.carousel-inner {
+  position: relative;
+  width: 75%;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+  background-color: rgb(6, 39, 3);
+}
+
+.about-body {
+  top: 5%;
+  position: relative;
+}
+
+.about-details {
+  font-family: "Verdana";
+  position: relative;
+  min-width: 200px;
+  width: 75%;
+  margin: 0 auto;
+}
+
+.resume-container {
+  max-height: 100%;
+  overflow: auto;
+}
+
+.resume-text {
+  font-family: "Verdana";
+  font-size: 0.9rem; 
+}
+
 #footer {
   top: 98.5% !important;
 }
@@ -139,6 +173,11 @@ div::-webkit-scrollbar-track {
     top: 20%;
     left: 6%;
   }
+
+  .about-details {
+    font-size: 0.8rem;
+    padding: 0 1rem;
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -151,9 +190,20 @@ div::-webkit-scrollbar-track {
   
   .home-card {
     padding: 0.1rem;
+    font-size: 0.7rem;
     width: 100%;
     top: 30%;
-    left: 6%;
+    left: 3%;
+  }
+
+  .about-details {
+    font-size: 0.7rem;
+    padding: 0 0.75rem;
+  }
+
+  .download-details, .project-intro {
+    font-family: "Verdana";
+    font-size: 0.8rem;
   }
 }
 
@@ -186,7 +236,8 @@ div::-webkit-scrollbar-track {
 
 @media screen and (max-width: 850px) {
   .bg_downloads_img {
-    left: 79%;
+    left: 72%;
+    height: 40%;
   }
 }
 
