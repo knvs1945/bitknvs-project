@@ -78,10 +78,34 @@ div::-webkit-scrollbar-track {
   scrollbar-color: transparent;
 }
 
-#home, #resume, #about, #downloads, #projects {
+#resume, #about, #downloads, #projects {
   position: absolute;
   opacity: 0;
   display: none;
+}
+
+#homeMenu {
+  display: none;
+  position: absolute;
+  opacity: 100;
+  z-index: -1;
+}
+
+@keyframes opacityWeave {
+  0% { opacity: 1;}
+  50% { opacity: 0.10;}
+  100% { opacity: 1;}
+}
+
+.home-card {
+  opacity: 0;
+  background-color: transparent;
+  color: rgb(165, 226, 136);
+  height: auto;
+  margin: 0px auto;
+  font-family: "Verdana";
+  font-size: 0.8rem;
+  position: relative;
 }
 
 .card, .card-body, .accordion-collapse {
@@ -98,7 +122,7 @@ div::-webkit-scrollbar-track {
 
 /* Orientation settings */
 @media screen and (orientation: landscape) {
-  #home, #resume, #about, #downloads {
+  #homeMenu, #resume, #about, #downloads {
     width: 720px;
     height: 90%;
     
@@ -108,14 +132,28 @@ div::-webkit-scrollbar-track {
     height: 75%;
     margin: -2% auto 0;
   }
+
+  .home-card {
+    padding: 0.5rem;
+    width: 80%;
+    top: 20%;
+    left: 6%;
+  }
 }
 
 @media screen and (orientation: portrait) {
-  #home, #resume, #about, #downloads, #projects{
+  #homeMenu, #resume, #about, #downloads, #projects{
     width: 80%;
     height: 640px;
     top: 0%;
     margin: -20% auto;
+  }
+  
+  .home-card {
+    padding: 0.1rem;
+    width: 100%;
+    top: 30%;
+    left: 6%;
   }
 }
 

@@ -18,21 +18,36 @@ function homepageObj() {
   // start the page elements
   // Part loader for homepage
   this.loadPageElements = function() {
-
+    
     $(() => { $("#about").load("./pages/parts/about3.html"); });
     $(() => { $("#resume").load("./pages/parts/resume3.html"); });
     $(() => { $("#projects").load("./pages/parts/projects3.html"); });
     $(() => { $("#downloads").load("./pages/parts/downloads3.html"); });
     $(() => { $("#footer").load("./pages/parts/footer.html"); });
+  
+    // set the innerText of the homeInstructions to depend on the orientation of the browser
+    const vpWidth = window.innerWidth;
+    const orientation = window.screen.orientation.type;
+    const instruction = (orientation.includes("landscape") && vpWidth > 500) ? "Use ↑ or ↓ keys or click on an option to select</br> Press Enters or click the selected option to open" : "Use ← or → keys or click on an option to select</br> Press Enters or click the selected option to open";
+    $("#homeInstructions").html(instruction);
 
     gsap.to("#footer", { 
       opacity: 0,
       duration: 0,
       onComplete: () => {
+        $("#homeMenu").css("display","block")
         gsap.to("#footer", { 
           opacity: 0.5,
           duration: 3 
         });
+        gsap.to(".home-card", { 
+          opacity: 1,
+          duration: 3,
+          onComplete: () => {
+            $("#homeInstructions").css("animation","opacityWeave 10s ease-in-out infinite");
+          }
+        });
+        
       }
     });
 
