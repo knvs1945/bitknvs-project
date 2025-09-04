@@ -92,56 +92,56 @@ function homepageObj() {
     gridWidth = gridWidth.replace("px","");
     gridWidth = Number(gridWidth);
 
-    // use this formula for creating a grid based on square boxes 
-    /* 
-    const gridArea = gridWidth * gridHeight;
-    const boxArea = gridArea / gridCount;
-    const boxSide = Math.sqrt(boxArea);
-    const boxRows = Math.ceil(gridHeight / boxSide);
-    const boxColumns = Math.ceil(gridWidth / boxSide);
-    gridCount = boxRows * boxColumns;
-    const boxGrid = [];
-    flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${boxSide}px`;
-    flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide}px`;
-    for (let i = 0; i < gridCount; i++) {
-      const borderWidth = (Math.random() * 3) + 0.5;
-      const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
-      const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
-      const newBox = document.createElement("div");
-      newBox.style.width = boxSide + "px";
-      newBox.style.height = boxSide + "px";
-      newBox.classList.add("gridflash-part");
-      newBox.style.backgroundColor = "transparent";
-      newBox.style.border = `${borderWidth}px solid rgb(${shade1}, 216, ${shade2})`; // original shade: 158, 216, 131
-      flashDiv.appendChild(newBox);
-      boxGrid.push(newBox);
-    } 
-    */
-
     // use this formula for creating a grid using thin rectangles
-    const boxGrid = [];
-    const boxRows = gridCount;
-    const boxColumns = 1;
-    const boxSide = gridHeight / gridCount;
-    flashDiv.style.gridTemplateRows = `repeat(${boxRows}, ${gridWidth})px`;
-    flashDiv.style.gridTemplateColumns = `repeat(${boxColumns}, ${boxSide})px`;
 
+    const rowGrid = [], colGrid = [];
+    const borderWidth = 0.3;
+    let boxRows, boxColumns, boxSide;
+
+    // Build the rows first
+    boxRows = gridCount;
+    boxColumns = 1;
+    boxSide = gridHeight / gridCount;
     for (let i = 0; i < gridCount; i++) {
       // const borderWidth = (Math.random() * 3) + 0.5;
-      const borderWidth = 0.3;
+
       const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
       const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
       const newBox = document.createElement("div");
+      newBox.style.position = "absolute";
+      newBox.style.top = "0";
+      newBox.style.left = "0";
       newBox.style.width = gridWidth + "px";
       newBox.style.height = boxSide + "px";
+      newBox.style.transform = `translateY(${i * boxSide}px)`;
       newBox.classList.add("gridflash-part");
       newBox.style.backgroundColor = "transparent";
       newBox.style.border = `${borderWidth}px solid rgb(${shade1}, 216, ${shade2})`; // original shade: 158, 216, 131
       flashDiv.appendChild(newBox);
-      boxGrid.push(newBox);
+      rowGrid.push(newBox);
+    }
+    
+    // Then, build the columns based on the calculated side of the rows
+    boxRows = 1;
+    boxColumns = Math.floor(gridWidth / boxSide);
+    for ( let i = 0; i < boxColumns; i++ ) {
+      const shade1 = Math.max(118, Math.min((Math.random() * 255), 198)); // range fom 108 - 208 (originally 158)
+      const shade2 = Math.max(91, Math.min((Math.random() * 255), 161)); // range from 81 - 181 (originally 131)
+      const newBox = document.createElement("div");
+      newBox.style.position = "absolute";
+      newBox.style.top = "0";
+      newBox.style.left = "0";
+      newBox.style.width = boxSide + "px";
+      newBox.style.height = gridHeight + "px";
+      newBox.style.transform = `translateX(${i * boxSide}px)`;
+      newBox.classList.add("gridflash-part");
+      newBox.style.backgroundColor = "transparent";
+      newBox.style.border = `${borderWidth}px solid rgb(${shade1}, 216, ${shade2})`; // original shade: 158, 216, 131
+      flashDiv.appendChild(newBox);
+      colGrid.push(newBox);
     }
 
-    return boxGrid;
+    return { rows: rowGrid, cols: colGrid };
   }
 
   this.showPanel = function(panel) {
@@ -183,6 +183,10 @@ function homepageObj() {
       flashDiv.classList.add("translate-middle");
       const tempGrid = createFlashGrid(flashDiv);
 
+      const rows = tempGrid.rows;
+      const cols = tempGrid.cols;
+      let maxLength = rows.length > cols.length? rows.length : cols.length;
+
       // shuffle the current grid by swapping the items at indices i and j using destructuring []
       function randomizeGrid() {
         for (let i = tempGrid.length - 1; i > 0; i--) {
@@ -192,23 +196,45 @@ function homepageObj() {
       }
       
       // assign separate gsap actions per box and chain them
-      let startGsap = null, prevGsap = null;
-      for (let i = 0; i < tempGrid.length; i++) {
-        const box = tempGrid[i];
-        box.style.opacity = 0;
-        const currentGsap = gsap.to(box, {
-          opacity: 1,
-          duration: 0.01,
-          paused: true
-        })
+      let startGsapR = null, startGsapC = null, prevGsapR = null, prevGsapC = null;
+      for (let i = 0; i < maxLength; i++) {        
+        
+        let box;
+        if (i < rows.length) {  
+          box = rows[i];
+          box.style.opacity = 0;
+          const currentGsapR = gsap.to(box, {
+            opacity: 1,
+            duration: 0.01,
+            paused: true
+          })
 
-        if (!startGsap) startGsap = currentGsap;
-        if (prevGsap) {
-          prevGsap.vars.onComplete = () => {
-            currentGsap.play();
+          if (!startGsapR) startGsapR = currentGsapR;
+          if (prevGsapR) {
+            prevGsapR.vars.onComplete = () => {
+              currentGsapR.play();
+            }
           }
+          prevGsapR = currentGsapR;
         }
-        prevGsap = currentGsap;
+
+        if (i < cols.length) {  
+          box = cols[i];
+          box.style.opacity = 0;
+          const currentGsapC = gsap.to(box, {
+            opacity: 1,
+            duration: 0.01,
+            paused: true
+          })
+
+          if (!startGsapC) startGsapC = currentGsapC;
+          if (prevGsapC) {
+            prevGsapC.vars.onComplete = () => {
+              currentGsapC.play();
+            }
+          }
+          prevGsapC = currentGsapC;
+        }
       }
 
       tempDiv.style.opacity = 0;
@@ -225,6 +251,9 @@ function homepageObj() {
           document.body.removeChild(flashDiv);
         }
       });
+
+      let prevGsap = rows.length > cols.length ? prevGsapR : prevGsapC;
+      // let startGsap = rows.length > cols.length ? startGsapR : startGsapC;
       prevGsap.vars.onComplete = () => {
         flashDiv.style.backgroundColor = "white";
         flashDiv.style.opacity = 1;
@@ -232,7 +261,8 @@ function homepageObj() {
       }
 
       // start the intro animation
-      startGsap.play();
+      startGsapR.play();
+      startGsapC.play();
     }
   }
 }

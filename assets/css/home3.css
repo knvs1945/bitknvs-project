@@ -84,6 +84,26 @@ div::-webkit-scrollbar-track {
   margin: 0 auto;
 }
 
+.sl {
+  color: rgb(6, 39, 3);
+}
+
+.sl.li:hover {
+  color: rgb(0, 100, 131);
+}
+
+.sl.fb:hover {
+  color: rgb(0, 26, 255);
+}
+
+.sl.ig:hover {
+  color: rgb(255, 0, 64);
+}
+
+.sl.gh:hover {
+  color: rgb(10, 121, 0);
+}
+
 .resume-container {
   max-height: 100%;
   overflow: auto;
