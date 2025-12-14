@@ -168,6 +168,8 @@ app.get('/resume', loader.content);
 app.get('/projects', loader.content);
 app.get('/downloads', loader.content);
 
+app.get('/angel', loader.xtras)
+
 // vercel public routes
 app.get('/public/*', loader.public);
 

@@ -10,6 +10,7 @@ const indexpage = "/index";
 const indexThree = "/index3";
 const toolsdir = "/tools";
 const threedir = "/three";
+const xtrasdir = "/xtras";
 
 // custom paths e.g. tools folder
 const toolkit = require('./toolkit.js');
@@ -66,6 +67,14 @@ function public(req, res) {
   res.sendFile(fullPath);
 }
 
+// load extras
+function xtras(req, res) {
+  if (setupCORS(req, res)) return;
+  const pageloc = req.path;
+  let fullPath = path.join(curpath, maindir, xtrasdir, pageloc + ".html");
+  res.sendFile(fullPath);
+}
+
 async function tools(req, res) {
   if (setupCORS(req, res)) return;
 
@@ -91,5 +100,6 @@ module.exports = {
   content3,
   parts,
   public,
+  xtras,
   tools
 }
