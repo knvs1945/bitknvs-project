@@ -19,7 +19,7 @@
 }
 
 .content-title {
-  font-size: 2.4rem;
+  font-size: 2rem;
 }
 
 .content-text {
@@ -72,7 +72,6 @@ div::-webkit-scrollbar-track {
 }
 
 .about-body {
-  top: 5%;
   position: relative;
 }
 
@@ -109,9 +108,13 @@ div::-webkit-scrollbar-track {
   overflow: auto;
 }
 
+.resume-body {
+  padding: 0 2rem;
+}
+
 .resume-text {
   font-family: "Verdana";
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
 }
 
 #footer {
