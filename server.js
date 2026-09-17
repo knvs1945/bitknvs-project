@@ -180,6 +180,7 @@ app.get('/tools/*', loader.tools);
 app.get('/sbreadhs*', loadGetDB);
 
 // html5 routes
+app.get('/pktb', loader.html5)
 app.get('/pktb/*', loader.html5)
 
 // POST routes
