@@ -57,13 +57,14 @@ function content3(req, res) {
 // load page contents for pktb
 function html5(req,res) {
   if (setupCORS(req,res)) return;
-  const pageloc = req.path;
+  let pageloc = req.path;
   let target_file = ""
   console.log(`pageloc requested: ${pageloc}`)
 
   // add path to pktb webapp
   if (pageloc.includes('pktb')) {
-    if (pageloc.endsWith("pktb/") || pageloc.endsWith("webapp.html")) target_file = "pktb/webapp.html";
+    if (pageloc.endsWith('*')) pageloc = pageloc.replace('*','')
+    if (pageloc.endsWith("pktb/") || pageloc.endsWith("webapp") || pageloc.endsWith("webapp.html")) target_file = "pktb/webapp.html";
     else target_file = pageloc
   }
 
