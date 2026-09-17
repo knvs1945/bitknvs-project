@@ -10,6 +10,7 @@ const indexpage = "/index";
 const indexThree = "/index3";
 const toolsdir = "/tools";
 const threedir = "/three";
+const html5dir = "/html5";
 const xtrasdir = "/xtras";
 
 // custom paths e.g. tools folder
@@ -50,6 +51,24 @@ function content3(req, res) {
   if (setupCORS(req, res)) return;
   const pageloc = req.path;
   let fullPath = path.join(curpath, maindir, threedir, pageloc + ".html");
+  res.sendFile(fullPath);
+}
+
+// load page contents for pktb
+function html5(req,res) {
+  if (setupCORS(req,res)) return;
+  const pageloc = req.path;
+  let target_file = ""
+  console.log(`pageloc requested: ${pageloc}`)
+
+  // add path to pktb webapp
+  if (pageloc.includes('pktb')) {
+    if (pageloc.endsWith("pktb/") || pageloc.endsWith("webapp.html")) target_file = "pktb/webapp.html";
+    else target_file = pageloc
+  }
+
+  let fullPath = path.join(curpath, maindir, html5dir, target_file )
+  console.log(`HTML5 fullpath requested: ${fullPath}`)
   res.sendFile(fullPath);
 }
 
@@ -98,6 +117,7 @@ module.exports = {
   index,
   content,
   content3,
+  html5,
   parts,
   public,
   xtras,

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PKTB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <button id="hamburger-btn" class="hamburger-btn" aria-label="Open menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Fetched from html/sidebar.html by app.js and injected here -->
+  <div id="sidebar-include"></div>
+
+  <div class="app-container">
+
+    <header class="app-header">
+      <h1>PKTB</h1>
+      <p class="app-subtitle">Build and rate your dream team</p>
+    </header>
+
+    <section class="search-section">
+      <div class="search-box">
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search a Pokémon"
+          autocomplete="off"
+        >
+        <button id="search-clear-btn" class="search-clear-btn" aria-label="Clear search" hidden>&times;</button>
+        <div id="suggestions" class="suggestions" hidden>
+          <!-- suggestion items get inserted here by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <section class="random-suggestions-section">
+      <div class="random-suggestions-header">
+        <p class="random-suggestions-label">Try one of these for your team!</p>
+        <button id="shuffle-btn" class="shuffle-btn" aria-label="Shuffle suggestions">S</button>
+      </div>
+      <div id="random-suggestions" class="random-suggestions-grid">
+        <!-- 6 random suggestion cards inserted by app.js, e.g.:
+        <button class="suggestion-card" data-pokemon-id="25">
+          <img src="..." alt="">
+          <span>Pikachu</span>
+        </button>
+        -->
+      </div>
+    </section>
+
+    <section class="roster-section">
+      <div class="roster-header">
+        <h2>Your team</h2>
+        <div class="roster-header-actions">
+          <span id="roster-count" class="roster-count">0 / 6</span>
+          <button id="clear-team-btn" class="clear-team-btn">Clear team</button>
+        </div>
+      </div>
+
+      <div id="roster-grid" class="roster-grid">
+        <!-- roster nodes get inserted here by app.js, e.g.:
+        <div class="roster-slot" data-pokemon-id="25">
+          <button class="roster-remove-btn" aria-label="Remove Pikachu">&times;</button>
+          <img src="..." alt="">
+          <span class="roster-name">Pikachu</span>
+        </div>
+        -->
+      </div>
+
+      <button id="rate-team-btn" class="rate-team-btn" disabled>
+        Rate my team
+      </button>
+    </section>
+
+  </div>
+
+  <!-- Fetched from html/footer.html by app.js and injected here -->
+  <div id="footer-include"></div>
+
+  <!-- Evaluation lightbox: sits outside .app-container, hidden until a team is evaluated -->
+  <div id="lightbox" class="lightbox">
+    <div class="lightbox-panel">
+
+      <div class="lightbox-header">
+        <div class="lightbox-tabs">
+          <button class="tab-btn is-active" data-tab="matchups">Team matchups</button>
+          <button class="tab-btn" data-tab="personality">Personality</button>
+        </div>
+        <div class="lightbox-header-actions">
+          <button id="save-rating-btn" class="save-rating-btn">Save rating</button>
+          <button id="lightbox-close" class="lightbox-close" aria-label="Close">&times;</button>
+        </div>
+      </div>
+
+      <div class="lightbox-body">
+
+        <div class="matchup-lineup">
+          <div id="matchup-roster" class="matchup-lineup-grid">
+            <!-- clickable team icons inserted by lightbox.js, e.g.:
+            <button class="matchup-lineup-item" data-pokemon-id="25">
+              <img src="..." alt="">
+              <span class="lineup-name">Pikachu</span>
+            </button>
+            -->
+          </div>
+        </div>
+
+        <div class="matchup-evaluation">
+
+          <div id="tab-matchups" class="tab-panel is-active">
+            <div class="chart-section">
+              <div class="chart-subtabs">
+                <button type="button" class="chart-subtab-btn is-active" data-chart-tab="pros">
+                  <span class="subtab-icon subtab-icon-plus" aria-hidden="true">+</span>
+                  Strong Against
+                </button>
+                <button type="button" class="chart-subtab-btn" data-chart-tab="cons">
+                  <span class="subtab-icon subtab-icon-minus" aria-hidden="true">&minus;</span>
+                  Weak Against
+                </button>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="matchup-chart"></canvas>
+              </div>
+            </div>
+
+            <div class="eval-section">
+              <div id="eval-subtabs" class="eval-subtabs">
+                <button type="button" class="eval-subtab-btn is-active" data-eval-tab="team">Full team</button>
+                <!-- one tab per clicked pokemon gets appended here by lightbox.js -->
+              </div>
+              <div id="eval-content" class="eval-content">
+                <!-- active subtab's text inserted by lightbox.js -->
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-personality" class="tab-panel">
+            <div id="personality-headline" class="personality-headline">
+              <!-- extracted MBTI headline inserted by lightbox.js -->
+            </div>
+            <div id="personality-detail" class="personality-detail">
+              <!-- trainer personality result inserted by app.js -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- About PKTB modal: triggered from the sidebar, independent of the evaluation lightbox -->
+  <div id="about-lightbox" class="lightbox">
+    <div class="lightbox-panel about-panel">
+      <div class="about-title">
+        <h2>About PKTB</h2>
+      </div>
+      <div class="about-description">
+        <p>
+          <strong>PKTB</strong> stands for <strong>Pokémon Team Builder</strong> — a for-fun
+          LangChain project built for <a href="https://bitknvs.com" target="_blank" rel="noopener noreferrer">bitknvs.com</a>
+          by Kevin Joseff Cabrera.
+        </p>
+        <p>
+          Search for any Pokémon and add up to six to your roster, then hit "Rate my team" to
+          send it off to an AI agent for evaluation. It'll break down which types your team is
+          strong and weak against, let you dig into how each individual Pokémon fits in, and even
+          take a guess at what your picks say about your personality as a trainer.
+        </p>
+        <p class="tech-stack">
+          <strong>Built with:</strong> vanilla HTML, CSS &amp; JavaScript on the frontend;
+          Flask, LangChain, Anthropic's Claude, and ChromaDB on the backend; PokéAPI for Pokémon
+          data; Chart.js and html2canvas for the visuals.
+        </p>
+      </div>
+      <button type="button" id="about-close-btn" class="about-close-btn">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

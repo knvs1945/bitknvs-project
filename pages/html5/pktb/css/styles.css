@@ -1,0 +1,1002 @@
+/* ---------- Variables ---------- */
+:root {
+  --color-bg: #ff9f19;
+  --color-container: #fff9a3;
+  --color-surface: #ffffff;
+  --color-ink: #2c2410;
+  --color-ink-muted: #6b5f3a;
+  --color-accent: #e3350d;
+  --color-accent-ink: #ffffff;
+  --color-border: rgba(44, 36, 16, 0.15);
+
+  --font-heading: 'Fredoka', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --container-max-width: 800px;
+  --container-padding: 24px;
+}
+
+/* ---------- Reset ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+/* ---------- Main container ---------- */
+/* Everything except the lightbox lives in here, so margin/padding/width
+   tweaks only need to happen in this one rule. */
+.app-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+  background: var(--color-container);
+  flex: 1;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --container-padding: 16px;
+  }
+
+  .app-container {
+    margin: 16px auto;
+    border-radius: var(--radius-lg);
+  }
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  margin: 56px 0 20px;
+  text-align: center;
+}
+
+.app-header h1 {
+  font-size: 40px;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 640px) {
+  .app-header {
+    margin-top: 8px;
+  }
+}
+
+.app-subtitle {
+  margin: 6px 0 0;
+  color: var(--color-ink-muted);
+  font-size: 14px;
+}
+
+/* ---------- Search band ---------- */
+/* On mobile this bleeds edge-to-edge in the page's orange, so the search
+   bar and quick-suggestions sit on --color-bg rather than the cream
+   container. On desktop it reverts to plain (no bleed, no color). */
+.search-band {
+  background: var(--color-bg);
+  margin: 0 calc(var(--container-padding) * -1);
+  padding: 16px var(--container-padding) 4px;
+}
+
+@media (min-width: 640px) {
+  .search-band {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ---------- Search ---------- */
+.search-section {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 40px 0 16px;
+  font-size: 16px; /* 16px minimum keeps iOS from auto-zooming on focus */
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+}
+
+.search-clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--color-ink-muted);
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.search-clear-btn:active {
+  background: rgba(44, 36, 16, 0.08);
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 20;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff var(--color-bg);
+}
+
+.suggestion-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--color-surface);
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover,
+.suggestion-item:focus {
+  background: rgba(227, 53, 13, 0.08);
+}
+
+/* Scoped to this element only — ::-webkit-scrollbar and scrollbar-color
+   are per-element properties, not global ones, so this has zero effect on
+   scrollbars anywhere else on the page. */
+.suggestions::-webkit-scrollbar {
+  width: 10px;
+}
+
+.suggestions::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 999px;
+  border: 2px solid var(--color-bg);
+}
+
+/* ---------- Random suggestions ---------- */
+/* Bleeds edge-to-edge within the container (left/right only) in the page's
+   orange, reading as a colored "gap" cut into the cream container. Applies
+   at every breakpoint now, not just mobile. */
+.random-suggestions-section {
+  background: var(--color-bg);
+  margin: 0 calc(var(--container-padding) * -1) 28px;
+  padding: 10px var(--container-padding);
+}
+
+.random-suggestions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.random-suggestions-label {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.shuffle-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.shuffle-btn:active {
+  transform: rotate(180deg);
+}
+
+.random-suggestions-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff var(--color-bg);
+}
+
+.random-suggestions-grid::-webkit-scrollbar {
+  height: 10px;
+}
+
+.random-suggestions-grid::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+.random-suggestions-grid::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 999px;
+  border: 2px solid var(--color-bg);
+}
+
+.suggestion-card {
+  flex: 0 0 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+.suggestion-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.suggestion-name {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.suggestion-card:active {
+  opacity: 0.85;
+}
+
+.suggestion-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------- Roster ---------- */
+.roster-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.roster-header h2 {
+  font-size: 18px;
+}
+
+.roster-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.roster-count {
+  font-size: 13px;
+  color: var(--color-ink-muted);
+}
+
+.clear-team-btn {
+  background: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+}
+
+.clear-team-btn:active {
+  opacity: 0.85;
+}
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.roster-slot {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 6px;
+  position: relative;
+  min-height: 132px;
+}
+
+.roster-slot.is-empty {
+  border-style: dashed;
+  color: var(--color-ink-muted);
+}
+
+.roster-slot img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.roster-name {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  text-transform: capitalize;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.roster-remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-bg);
+  color: #ffffff;
+  font-size: 12px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.rate-team-btn {
+  width: 100%;
+  height: 52px;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.rate-team-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.rate-team-btn:not(:disabled):active {
+  opacity: 0.85;
+}
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 36, 16, 0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  display: none;
+}
+
+.lightbox.is-open {
+  display: flex;
+}
+
+.lightbox-panel {
+  width: 90vw;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-container);
+  border: 5px solid var(--color-bg);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.lightbox-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.lightbox-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.save-rating-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.save-rating-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.save-rating-btn:not(:disabled):active {
+  opacity: 0.8;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+}
+
+.tab-btn.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.tab-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lightbox-close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-ink-muted);
+  padding: 4px;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.is-active {
+  display: block;
+}
+
+/* ---------- Matchups tab layout ---------- */
+/* Mobile: lineup + evaluation stack in one column and scroll together as a
+   single block. Desktop: lineup becomes a fixed 1/3-width left column that
+   doesn't scroll, and the evaluation pane (2/3) scrolls independently within
+   its own bounded height. */
+.lightbox-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+@media (min-width: 640px) {
+  .lightbox-body {
+    flex-direction: row;
+    align-items: stretch;
+    overflow: visible;
+  }
+
+  .matchup-lineup {
+    flex: 0 0 33%;
+  }
+
+  .matchup-evaluation {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
+.matchup-lineup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.matchup-lineup-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  min-height: 112px;
+}
+
+.matchup-lineup-item img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .matchup-lineup-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    height: 100%;
+  }
+
+  .matchup-lineup-item {
+    min-height: 0;
+  }
+
+  .matchup-lineup-item img {
+    width: 92px;
+    height: 92px;
+  }
+}
+
+.matchup-lineup-item .lineup-name {
+  width: 100%;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-ink);
+  text-transform: capitalize;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.matchup-lineup-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Pros/Cons chart --- */
+/* Mobile: subtab buttons sit as a row above the chart, each getting full
+   width, so the chart itself gets the full width it needs. Desktop: they
+   move back to a column on the left, each button stretched to fill the
+   chart's height. */
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.chart-subtabs {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.chart-subtab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.chart-canvas-wrap {
+  min-width: 0;
+  position: relative;
+  height: 200px;
+}
+
+@media (min-width: 640px) {
+  .chart-section {
+    flex-direction: row;
+  }
+
+  .chart-subtabs {
+    flex-direction: column;
+    flex: 0 0 112px;
+  }
+
+  .chart-subtab-btn {
+    justify-content: flex-start;
+  }
+
+  .chart-canvas-wrap {
+    flex: 1;
+  }
+}
+
+/* Pros: light green when inactive, dark green + white text when active. */
+.chart-subtab-btn[data-chart-tab="pros"] {
+  background: #d9f2df;
+  border-color: #b7e4c3;
+  color: #1f7a34;
+}
+
+.chart-subtab-btn[data-chart-tab="pros"].is-active {
+  background: #2f9e44;
+  border-color: #2f9e44;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Cons: light red when inactive, dark red + white text when active. */
+.chart-subtab-btn[data-chart-tab="cons"] {
+  background: #fbdcd6;
+  border-color: #f3b8ac;
+  color: #a8280f;
+}
+
+.chart-subtab-btn[data-chart-tab="cons"].is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.subtab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.subtab-icon-plus {
+  background: #2f9e44;
+}
+
+.subtab-icon-minus {
+  background: var(--color-accent);
+}
+
+/* --- Evaluation: "Full team" tab plus one per clicked pokemon --- */
+.eval-subtabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+  padding-bottom: 4px;
+}
+
+.eval-subtab-btn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+.eval-subtab-btn.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+/* Mobile shows the pokemon's sprite as the tab header; desktop shows its
+   name instead — both are rendered, CSS just picks which one is visible. */
+.eval-subtab-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.eval-subtab-label {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .eval-subtab-icon {
+    display: none;
+  }
+
+  .eval-subtab-label {
+    display: inline;
+  }
+}
+
+.eval-content {
+  font-size: 14px;
+}
+
+.personality-headline {
+  margin-bottom: 12px;
+}
+
+.personality-headline-text {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.lightbox-placeholder {
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+
+.personality-detail {
+  font-size: 14px;
+}
+
+.agent-offline-message {
+  text-align: center;
+  font-size: 15px;
+  color: var(--color-ink-muted);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px 16px;
+}
+
+/* ---------- About PKTB modal ---------- */
+.about-panel {
+  width: 90%;
+  max-width: 480px;
+  height: auto;
+  max-height: 80vh;
+  overflow-y: auto;
+  gap: 16px;
+}
+
+.about-title h2 {
+  font-size: 22px;
+}
+
+.about-description {
+  font-size: 14px;
+}
+
+.about-description p {
+  margin: 0 0 12px;
+}
+
+.about-description a {
+  color: var(--color-accent);
+}
+
+.about-description .tech-stack {
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  margin-bottom: 0;
+}
+
+.about-close-btn {
+  align-self: flex-end;
+  background: var(--color-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.about-close-btn:active {
+  opacity: 0.85;
+}
+
+.error-text {
+  color: var(--color-accent);
+}
+
+/* ---------- Hamburger + sidebar ---------- */
+.hamburger-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 90;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.hamburger-btn span {
+  width: 18px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 36, 16, 0.55);
+  z-index: 120;
+}
+
+.sidebar-panel {
+  width: 240px;
+  max-width: 80vw;
+  height: 100%;
+  background: var(--color-container);
+  padding: 20px;
+  position: relative;
+}
+
+.sidebar-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-ink-muted);
+  padding: 4px;
+  margin-bottom: 12px;
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-nav-list a {
+  display: block;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sidebar-nav-list a:active {
+  background: rgba(44, 36, 16, 0.08);
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  text-align: center;
+  padding: 4px 16px;
+  min-height: 3vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--color-ink);
+}
+
+/* ---------- Loading spinner ---------- */
+/* Used by loader.js (withButtonLoading) and screenshot.js. Sized and
+   colored via the host button's font-size/currentColor, so the same class
+   works on the accent-red rate button and the neutral roster icon buttons. */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: pktb-spin 0.7s linear infinite;
+}
+
+@keyframes pktb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Small phones ---------- */
+@media (max-width: 380px) {
+  :root {
+    --container-padding: 16px;
+  }
+}

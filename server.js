@@ -179,6 +179,9 @@ app.get('/widgetspinner', loader.content3);
 app.get('/tools/*', loader.tools);
 app.get('/sbreadhs*', loadGetDB);
 
+// html5 routes
+app.get('/pktb/*', loader.html5)
+
 // POST routes
 app.post('/index', loader.index);
 app.post('/', loader.index);
