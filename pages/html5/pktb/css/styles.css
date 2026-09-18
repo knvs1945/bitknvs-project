@@ -77,9 +77,10 @@ button {
   text-align: center;
 }
 
-.app-header h1 {
-  font-size: 40px;
-  letter-spacing: 0.02em;
+.app-logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
 }
 
 @media (min-width: 640px) {
@@ -91,7 +92,7 @@ button {
 .app-subtitle {
   margin: 6px 0 0;
   color: var(--color-ink-muted);
-  font-size: 14px;
+  font-size: 18px;
 }
 
 /* ---------- Search band ---------- */
@@ -259,6 +260,12 @@ button {
 
 .shuffle-btn:active {
   transform: rotate(180deg);
+}
+
+.shuffle-btn img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .random-suggestions-grid {
@@ -461,6 +468,7 @@ button {
 }
 
 .lightbox-panel {
+  position: relative;
   width: 90vw;
   height: 90vh;
   display: flex;
@@ -583,8 +591,8 @@ button {
 
 .matchup-lineup-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 8px;
 }
 
@@ -609,8 +617,6 @@ button {
 
 @media (min-width: 640px) {
   .matchup-lineup-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
     height: 100%;
   }
 
@@ -646,6 +652,7 @@ button {
    move back to a column on the left, each button stretched to fill the
    chart's height. */
 .chart-section {
+  background: var(--color-container);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -802,13 +809,121 @@ button {
   font-size: 14px;
 }
 
+/* ---------- Gym leader mascot ---------- */
+/* Mobile: centered at the bottom of the panel, with the evaluation bubbles
+   at half-opacity so he shows through behind the text rather than being
+   fully hidden. Desktop (below): anchored to the bottom-right corner
+   instead, full opacity, with the bubble reserving space beside him. */
+@media (max-width: 639px) {
+  #lightbox .lightbox-panel {
+    background-image: url('../static/gym_leader.png');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: auto 220px;
+  }
+
+  .eval-content,
+  .personality-detail {
+    position: relative;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-md);
+    padding: 10px;
+  }
+
+  .eval-content:empty,
+  .personality-detail:empty {
+    background: transparent;
+    padding: 0;
+  }
+}
+
+/* Desktop only for now — mobile treatment is above.
+   This is a background-image on the panel itself, not a foreground <img>:
+   a parent's background always paints beneath ALL of its children, by
+   spec, so every card inside (chart-section, the bubble, etc.) naturally
+   sits on top of him with zero z-index fighting. Scoped to #lightbox
+   specifically so the About PKTB modal, which reuses .lightbox-panel,
+   doesn't inherit it. */
+@media (min-width: 640px) {
+  #lightbox .lightbox-panel {
+    background-image: url('../static/gym_leader.png');
+    background-repeat: no-repeat;
+    background-position: right 0px bottom 0px;
+    background-size: auto 400px;
+  }
+
+  /* The bubble only covers the text area — it stops short of the mascot's
+     footprint (right: 200px) so that gap stays transparent and reveals the
+     panel's own background-image underneath, giving the illusion he's
+     built into the lightbox rather than layered awkwardly on top of it.
+     Actual content (the <p> inserted by lightbox.js) gets z-index:1 so it
+     reliably paints above this backdrop regardless of paint-order edge
+     cases with pseudo-elements. */
+  .eval-content,
+  .personality-detail {
+    position: relative;
+    padding: 5px 260px 5px 5px;
+    margin-bottom: 14px;
+    min-height: 180px;
+  }
+
+  .eval-content p,
+  .personality-detail p {
+    margin: 0;
+    padding: 5px;
+  }
+
+  .eval-content::before,
+  .personality-detail::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    right: 260px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .eval-content::after,
+  .personality-detail::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 250px;
+    border-width: 10px 10px 0 10px;
+    border-style: solid;
+    border-color: var(--color-surface) transparent transparent transparent;
+  }
+
+  .eval-content > *,
+  .personality-detail > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Hide the whole bubble while its content hasn't loaded yet — otherwise
+     it renders as an empty white box during the fetch. */
+  .eval-content:empty,
+  .personality-detail:empty {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .eval-content:empty::before,
+  .eval-content:empty::after,
+  .personality-detail:empty::before,
+  .personality-detail:empty::after {
+    display: none;
+  }
+}
+
 .personality-headline {
   margin-bottom: 12px;
 }
 
 .personality-headline-text {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: 2rem;
   font-weight: 600;
   color: var(--color-ink);
   margin: 0;
@@ -843,8 +958,14 @@ button {
   gap: 16px;
 }
 
-.about-title h2 {
-  font-size: 22px;
+.about-title {
+  text-align: center;
+}
+
+.about-logo {
+  max-width: 160px;
+  width: 100%;
+  height: auto;
 }
 
 .about-description {
